@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <title>Bài học về Insecure Design</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 90vh
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px
+        }
+
+        h1 {
+            font-size: clamp(2.5em, 8vw, 4em);
+            margin-bottom: 20px;
+            color: #333
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px
+        }
+
+        p,
+        li {
+            font-size: clamp(1em, 4vw, 1.2em);
+            line-height: 1.6;
+            color: #555;
+            text-align: left
+        }
+
+        ul {
+            padding-left: 25px
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 30px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section">
+        <div class="container">
+            <h1>A04: Insecure Design (Thiết kế Thiếu an toàn)</h1>
+            <p>Đây là một danh mục rộng, tập trung vào các rủi ro liên quan đến những <strong>sai sót trong quá trình
+                    thiết kế và kiến trúc</strong> của ứng dụng. Lỗi này không phải là do một đoạn code viết sai, mà là
+                do toàn bộ luồng logic của một tính năng đã "mở cửa" sẵn cho các cuộc tấn công, dù cho lập trình viên có
+                triển khai nó một cách hoàn hảo.</p>
+            <h2>Sự khác biệt giữa Insecure Design và Implementation Bug?</h2>
+            <ul>
+                <li><strong>Lỗi triển khai (Implementation Bug):</strong> Ví dụ như một lập trình viên quên kiểm tra
+                    quyền truy cập khi xem đơn hàng (gây ra IDOR). Logic đúng, nhưng code sai.</li>
+                <li><strong>Thiết kế thiếu an toàn (Insecure Design):</strong> Ví dụ như thiết kế một tính năng "chuyển
+                    tiền" mà không yêu cầu người dùng nhập lại mật khẩu hoặc mã OTP. Dù code chuyển tiền có đúng 100%,
+                    bản thân luồng logic này đã là một rủi ro.</li>
+            </ul>
+            <h2>Ví dụ về Thiết kế Thiếu an toàn</h2>
+            <ul>
+                <li>Một quy trình khôi phục mật khẩu không xác minh đầy đủ danh tính, cho phép chiếm tài khoản.</li>
+                <li>Không giới hạn số lần thử cho các hành động nhạy cảm, dẫn đến tấn công brute-force.</li>
+                <li>Thiết kế hệ thống tin tưởng quá mức vào dữ liệu từ người dùng hoặc các hệ thống khác mà không xác
+                    thực lại.</li>
+            </ul>
+            <h2>Làm thế nào để khắc phục?</h2>
+            <ul>
+                <li><strong>Sử dụng Threat Modeling (Mô hình hóa mối đe dọa):</strong> Trong giai đoạn thiết kế, hãy đặt
+                    mình vào vị trí của kẻ tấn công và suy nghĩ: "Hệ thống có thể bị tấn công ở đâu? Dữ liệu nào là quan
+                    trọng nhất? Luồng logic nào có thể bị lạm dụng?".</li>
+                <li><strong>Áp dụng các nguyên tắc thiết kế an toàn:</strong> Xây dựng các luồng kiểm soát truy cập chặt
+                    chẽ, an toàn ngay từ đầu.</li>
+                <li><strong>Tách biệt giữa các thành phần:</strong> Thiết kế hệ thống theo từng module nhỏ, độc lập để
+                    nếu một thành phần bị tấn công, các thành phần khác không bị ảnh hưởng.</li>
+            </ul>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    graph TD;
+                    A[Yêu cầu tính năng mới] --> B{Giai đoạn Thiết kế};
+                    B --> C{Thiếu Threat Modeling};
+                    B --> D[Thiết kế an toàn];
+                    C --> E[Luồng logic có lỗ hổng];
+                    D --> F[Luồng logic chặt chẽ];
+                    E --> G[Lập trình viên triển khai<br />code hoàn hảo];
+                    F --> G;
+                    G --> H((Ứng dụng));
+                    I(Kẻ tấn công) --> H;
+                    subgraph "Kết quả" direction LR
+                    E -- Gây ra --> J(Ứng dụng vẫn có lỗ hổng<br />dù code đúng);
+                    F -- Giảm thiểu --> K(Ứng dụng an toàn hơn);
+                classDef red fill:#c94a4a,stroke:#333,color:white; 
+                class C,E,J,I red;
+                </div>
+            </div>
+        </div>
+    </div>
+    <script
+        type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs'; mermaid.initialize({ startOnLoad: true, theme: 'base' });</script>
+</body>
+
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <title>Bài học về Logging Failures</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 90vh
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px
+        }
+
+        h1 {
+            font-size: clamp(2.5em, 8vw, 4em);
+            margin-bottom: 20px;
+            color: #333
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px
+        }
+
+        p,
+        li {
+            font-size: clamp(1em, 4vw, 1.2em);
+            line-height: 1.6;
+            color: #555;
+            text-align: left
+        }
+
+        ul {
+            padding-left: 25px
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 30px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section">
+        <div class="container">
+            <h1>A09: Security Logging and Monitoring Failures</h1>
+            <p>Lỗi này không trực tiếp gây ra một cuộc tấn công, nhưng nó khiến cho việc <strong>phát hiện, điều tra, và
+                    phản ứng</strong> với các cuộc tấn công trở nên cực kỳ khó khăn hoặc bất khả thi. Nó giống như việc
+                một tên trộm đột nhập vào nhà bạn mà không có camera an ninh nào ghi lại được hình ảnh.</p>
+            <h2>Các dạng lỗi phổ biến</h2>
+            <ul>
+                <li><strong>Không ghi log các sự kiện quan trọng:</strong> Các hành động như đăng nhập, đăng nhập thất
+                    bại, các giao dịch có giá trị cao... không được ghi lại.</li>
+                <li><strong>Log không chứa đủ thông tin:</strong> Log được ghi nhưng lại thiếu các thông tin cần thiết
+                    để điều tra như địa chỉ IP nguồn, User ID, thời gian chính xác...</li>
+                <li><strong>Log không được bảo vệ:</strong> Kẻ tấn công có thể dễ dàng truy cập và xóa hoặc sửa đổi các
+                    file log để che giấu dấu vết.</li>
+                <li><strong>Không có cơ chế cảnh báo:</strong> Dù log đã được ghi lại, nhưng không có hệ thống nào tự
+                    động phân tích và cảnh báo khi có các hoạt động đáng ngờ xảy ra.</li>
+            </ul>
+            <h2>Hậu quả là gì?</h2>
+            <ul>
+                <li><strong>Kẻ tấn công hoạt động trong thời gian dài mà không bị phát hiện.</strong></li>
+                <li><strong>Không thể xác định được mức độ thiệt hại</strong> sau một cuộc tấn công (dữ liệu nào đã bị
+                    đánh cắp, tài khoản nào đã bị chiếm quyền).</li>
+                <li><strong>Không thể tìm ra nguyên nhân gốc rễ</strong> của cuộc tấn công để vá lỗi.</li>
+            </ul>
+            <h2>Làm thế nào để khắc phục?</h2>
+            <ul>
+                <li><strong>Xác định các sự kiện cần ghi log:</strong> Đảm bảo tất cả các sự kiện nhạy cảm (đăng nhập,
+                    đổi mật khẩu, lỗi xác thực, lỗi kiểm soát truy cập, các giao dịch quan trọng) đều được ghi lại với
+                    đầy đủ thông tin.</li>
+                <li><strong>Bảo vệ file log:</strong> Đảm bảo chỉ những người có thẩm quyền mới có thể đọc và không ai
+                    có thể sửa/xóa log.</li>
+                <li><strong>Triển khai hệ thống giám sát và cảnh báo:</strong> Sử dụng các công cụ (như SIEM - Security
+                    Information and Event Management) để tự động phân tích log và gửi cảnh báo khi phát hiện các mẫu
+                    hành vi bất thường.</li>
+            </ul>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram 
+                    participant Attacker as Kẻ tấn công; 
+                    participant WebApp as Ứng dụng Web; 
+                    participant SystemLog as Nhật ký Hệ thống; 
+                    Attacker->>WebApp: Thử nhiều mật khẩu (Brute-force);
+                    WebApp-->>WebApp: LỖI: Không ghi log các lần đăng nhập thất bại; 
+                    Attacker->>WebApp: Tìm ra mật khẩu và Đăng nhập thành công!; 
+                    WebApp-->>WebApp: LỖI: Log đăng nhập thành công<br />không ghi rõ địa chỉ IP; 
+                    Attacker->>WebApp: Đánh cắp dữ liệu; 
+                    WebApp-->>WebApp: LỖI: Không có cảnh báo cho<br />hoạt động bất thường; 
+                    Note over SystemLog: Nhật ký hệ thống trống rỗng<br />hoặc thiếu thông tin trầm trọng.
+                    Note over Attacker, WebApp: Quản trị viên không hề hay biết<br />cuộc tấn công đang diễn ra.
+            </div>
+        </div>
+    </div>
+    <script
+        type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs'; mermaid.initialize({ startOnLoad: true, theme: 'base' });</script>
+</body>
+
+</html>

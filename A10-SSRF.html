@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học về SSRF</title>
+    <style>
+        /* CSS tương tự các bài khác */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1d2b3a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        .demo-section {
+            background-color: #1d2b3a;
+        }
+
+        .lesson-section {
+            background-color: #f0f2f5;
+            color: #333;
+            min-height: auto;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        h1 {
+            font-size: clamp(2em, 8vw, 3em);
+            margin-bottom: 20px;
+        }
+
+        .lesson-section h1,
+        .lesson-section h2 {
+            color: #333;
+        }
+
+        .lesson-section h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        p {
+            font-size: clamp(1em, 4vw, 1.2em);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #bdc3c7;
+        }
+
+        .lesson-section p,
+        .lesson-section li {
+            color: #555;
+            text-align: left;
+        }
+
+        .lesson-section ul {
+            padding-left: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            width: 80%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #34495e;
+            background-color: #2c3e50;
+            color: white;
+            font-size: 1em;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #server-response {
+            background-color: #111;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100px;
+            white-space: pre-wrap;
+            border: 1px solid #333;
+            margin-top: 20px;
+        }
+
+        .payload-example {
+            font-size: 0.9em;
+            text-align: left;
+            color: #ffc107;
+            background-color: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .payload-example code {
+            background: #1a1a1a;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        @media (min-width: 992px) {
+            .lesson-section .container {
+                max-width: 900px;
+            }
+
+            .mermaid-container {
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section demo-section">
+        <div class="container">
+            <h1>🔗 Thử nghiệm SSRF 🔗</h1>
+            <p>Ứng dụng này có chức năng tải ảnh đại diện từ một URL. Hãy xem cách kẻ tấn công lợi dụng nó để quét các
+                tài nguyên nội bộ của máy chủ.</p>
+            <div class="payload-example">
+                <p style="margin: 5px 0;"><strong>Thử URL hợp lệ:</strong> <code>https://example.com/avatar.jpg</code>
+                </p>
+                <hr style="border-color: #44586d; margin: 10px 0;">
+                <p style="margin: 5px 0;"><strong>Thử lệnh tấn công:</strong>
+                    <code>http://localhost/server-status</code></p>
+            </div>
+            <div class="input-group">
+                <input type="text" id="imageUrl" value="https://example.com/avatar.jpg" size="50">
+            </div>
+            <button onclick="fetchImage()">Tải ảnh</button>
+            <h2>Phản hồi từ máy chủ (giả lập):</h2>
+            <div id="server-response"></div>
+        </div>
+    </div>
+    <div class="section lesson-section">
+        <div class="container">
+            <h1>A10: Server-Side Request Forgery (SSRF) là gì?</h1>
+            <p style="text-align:center;">Hãy tưởng tượng bạn yêu cầu nhân viên văn phòng (máy chủ web) đi lấy một tài
+                liệu từ một địa chỉ URL công khai. Thay vì đưa một URL bình thường, bạn lại đưa địa chỉ của tủ tài liệu
+                tối mật ngay trong công ty (`http://localhost/thong-tin-mat`). Người nhân viên, vốn có quyền đi
+                lại tự do trong công ty, sẽ ngoan ngoãn đi lấy tài liệu đó và đưa cho bạn. SSRF là việc lừa máy chủ thực
+                hiện một yêu cầu đến một địa chỉ mà kẻ tấn công không thể truy cập trực tiếp.</p>
+            <h2>Rủi ro của SSRF?</h2>
+            <ul>
+                <li>Quét các cổng và dịch vụ đang chạy trên mạng nội bộ của máy chủ.</li>
+                <li>Truy cập vào các dịch vụ nội bộ không có xác thực (ví dụ: các trang admin, API nội bộ).</li>
+                <li>Đọc các file nhạy cảm trên máy chủ (`file:///etc/passwd`).</li>
+                <li>Tương tác với các dịch vụ metadata của nhà cung cấp đám mây (AWS, Google Cloud...) để lấy cắp các
+                    thông tin xác thực.</li>
+            </ul>
+            <h2>Làm thế nào để khắc phục?</h2>
+            <ul>
+                <li><strong>Sử dụng danh sách cho phép (Allow List):</strong> Chỉ cho phép máy chủ kết nối đến một danh
+                    sách các tên miền, IP, và cổng đã được phê duyệt trước. Đây là cách hiệu quả nhất.</li>
+                <li><strong>Xác thực và làm sạch đầu vào:</strong> Không bao giờ tin tưởng hoàn toàn vào URL do người
+                    dùng cung cấp. Phân tích và kiểm tra kỹ lưỡng cấu trúc của URL.</li>
+                <li><strong>Vô hiệu hóa các schema không cần thiết:</strong> Chỉ cho phép các schema cần thiết như
+                    `http` và `https`, chặn các schema nguy hiểm như `file://`, `ftp://`, `gopher://`.</li>
+                <li><strong>Phân tách mạng:</strong> Đảm bảo máy chủ web không thể truy cập tùy tiện vào các tài nguyên
+                    quan trọng khác trong mạng nội bộ.</li>
+            </ul>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant Attacker as Kẻ tấn công
+                    participant WebServer as Máy chủ Web
+                    participant InternalService as Dịch vụ Nội bộ (ví dụ: trang admin)
+                    Attacker->>WebServer: 1. Yêu cầu tải ảnh từ URL:<br />`http://localhost/server-status`
+                    Note right of WebServer: LỖI: Máy chủ không kiểm tra<br />tính hợp lệ của URL.
+                    WebServer->>InternalService: 2. Gửi yêu cầu đến dịch vụ nội bộ
+                    InternalService-->>WebServer: 3. Trả về dữ liệu nhạy cảm
+                    WebServer-->>Attacker: 4. Hiển thị dữ liệu nội bộ cho kẻ tấn công
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const responseDiv = document.getElementById('server-response');
+        const fakeInternalData = {
+            'http://localhost/server-status': 'Apache Server Status for localhost\n\nServer Version: Apache/2.4.52 (Ubuntu)\nServer MPM: event\n\nCPU Usage: u2.3 s.8 cu0 cs0\n.0312 requests/sec - 4.5 kB/second - 144.0 kB/request\n_ K . W K W K _ ...',
+            'http://localhost/api/users/1': '{ "userId": 1, "username": "admin", "role": "administrator" }'
+        };
+        function fetchImage() {
+            const url = document.getElementById('imageUrl').value;
+            if (fakeInternalData[url]) {
+                responseDiv.style.color = '#e74c3c';
+                responseDiv.textContent = 'LỖI SSRF! Máy chủ đã truy cập và trả về dữ liệu từ tài nguyên nội bộ:\n\n' + fakeInternalData[url];
+            } else if (url.startsWith('http')) {
+                responseDiv.style.color = '#28a745';
+                responseDiv.textContent = `Thành công! Máy chủ đã tải "ảnh" từ: ${url}`;
+            } else {
+                responseDiv.style.color = '#ffc107';
+                responseDiv.textContent = 'URL không hợp lệ.';
+            }
+        }
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+
+</html>

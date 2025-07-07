@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <title>Bài học về Integrity Failures</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 90vh
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px
+        }
+
+        h1 {
+            font-size: clamp(2.5em, 8vw, 4em);
+            margin-bottom: 20px;
+            color: #333
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px
+        }
+
+        p,
+        li {
+            font-size: clamp(1em, 4vw, 1.2em);
+            line-height: 1.6;
+            color: #555;
+            text-align: left
+        }
+
+        ul {
+            padding-left: 25px
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 30px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section">
+        <div class="container">
+            <h1>A08: Software and Data Integrity Failures</h1>
+            <p>Lỗi này liên quan đến việc không kiểm tra tính toàn vẹn của phần mềm và dữ liệu. Nó xảy ra khi ứng dụng
+                tin tưởng vào các nguồn dữ liệu hoặc các plugin, thư viện mà không xác minh xem chúng có bị thay đổi hay
+                không. Ví dụ kinh điển nhất là <strong>Insecure Deserialization (Giải tuần tự hóa không an
+                    toàn)</strong>.</p>
+            <h2>Insecure Deserialization là gì?</h2>
+            <p>Tuần tự hóa (Serialization) là quá trình chuyển một đối tượng (object) trong bộ nhớ thành một chuỗi byte
+                hoặc text để lưu trữ hoặc truyền đi. Giải tuần tự hóa (Deserialization) là quá trình ngược lại. Lỗ hổng
+                xảy ra khi ứng dụng giải tuần tự hóa dữ liệu từ một nguồn không đáng tin cậy. Kẻ tấn công có thể thay
+                đổi chuỗi dữ liệu này để khi được giải tuần tự hóa, nó sẽ tạo ra một đối tượng độc hại, cho phép thực
+                thi mã từ xa.</p>
+            <h2>Ví dụ về Rủi ro</h2>
+            <ul>
+                <li><strong>Thực thi mã từ xa (RCE):</strong> Kẻ tấn công có thể tạo một đối tượng độc hại, khi được
+                    giải tuần tự hóa, sẽ thực thi các lệnh tùy ý trên máy chủ.</li>
+                <li><strong>Cập nhật phần mềm độc hại:</strong> Một quy trình cập nhật tự động có thể tải về và cài đặt
+                    một bản cập nhật đã bị kẻ tấn công thay đổi nếu không có cơ chế kiểm tra chữ ký số.</li>
+            </ul>
+            <h2>Làm thế nào để khắc phục?</h2>
+            <ul>
+                <li><strong>Không chấp nhận các đối tượng được tuần tự hóa từ các nguồn không đáng tin cậy.</strong> Nếu
+                    bắt buộc phải làm vậy, hãy sử dụng các định dạng dữ liệu đơn giản như JSON và không giải tuần tự hóa
+                    các đối tượng có thể chứa logic thực thi.</li>
+                <li><strong>Sử dụng chữ ký số (Digital Signatures):</strong> Luôn kiểm tra chữ ký số của bất kỳ phần
+                    mềm, bản cập nhật, hay dữ liệu quan trọng nào trước khi sử dụng để đảm bảo nó không bị chỉnh sửa.
+                </li>
+                <li><strong>Thực hiện kiểm tra tính toàn vẹn:</strong> Sử dụng các thuật toán băm (hashing) để đảm bảo
+                    dữ liệu không bị thay đổi trong quá trình truyền tải.</li>
+            </ul>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram 
+                    participant Attacker as Kẻ tấn công;
+                    participant WebApp as Ứng dụng Web; 
+                    Note over Attacker, WebApp: Kẻ tấn công tạo một đối tượng độc hại<br />và tuần tự hóa nó thành một chuỗi. 
+                    Attacker->>WebApp: 1. Gửi chuỗi dữ liệu độc hại (ví dụ: qua cookie) 
+                    Note right of WebApp: Ứng dụng nhận chuỗi và giải tuần tự hóa<br />nó một cách mù quáng. 
+                    WebApp-->>WebApp: 2. LỖI: new MaliciousObject() được tạo ra! 
+                    Note right of WebApp: Đối tượng độc hại thực thi mã lệnh<br />ngay khi được khởi tạo. 
+                    WebApp-->>Attacker: 3. Máy chủ bị chiếm quyền / Dữ liệu bị rò rỉ. 
+                </div>
+            </div>
+        </div>
+    </div>
+    <script
+        type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs'; mermaid.initialize({ startOnLoad: true, theme: 'base' });</script>
+</body>
+
+</html>
