@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học về CSRF</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 100vh
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1)
+        }
+
+        h1 {
+            font-size: clamp(2em, 8vw, 3em);
+            margin-bottom: 20px;
+            color: #333
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px
+        }
+
+        ul {
+            text-align: left;
+            padding-left: 25px
+        }
+
+        p,
+        li {
+            font-size: clamp(1em, 4vw, 1.2em);
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #555
+        }
+
+        .site-box {
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px
+        }
+
+        .site-box h3 {
+            margin-top: 0;
+            color: #4a90e2
+        }
+
+        .site-box-malicious h3 {
+            color: #c94a4a
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color .3s ease;
+            width: 100%
+        }
+
+        .info-display {
+            background-color: #eee;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 10px;
+            font-family: 'Courier New', Courier, monospace
+        }
+
+        #maliciousBtn {
+            background-color: #c94a4a
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 30px
+        }
+
+        @media (min-width:992px) {
+            .container {
+                max-width: 900px
+            }
+
+            .mermaid-container {
+                margin-top: 40px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section">
+        <div class="container">
+            <h1>🎭 Thử nghiệm Cross-Site Request Forgery (CSRF) 🎭</h1>
+            <p>Demo này mô phỏng hai trang web: một trang mạng xã hội bạn đã đăng nhập và một trang web độc hại.</p>
+            <div class="site-box">
+                <h3>Trang Mạng xã hội (<code>mangxahoi.com</code>)</h3>
+                <p>Bạn đã đăng nhập. Trạng thái hiện tại của bạn là:</p>
+                <div id="statusDisplay" class="info-display">"Hôm nay trời đẹp quá!"</div>
+            </div>
+            <div class="site-box site-box-malicious">
+                <h3>Trang web độc hại (<code>trangwebgianlan.com</code>)</h3>
+                <p>Trang này có một nút bấm trông rất hấp dẫn. Hãy nhấn vào nó để xem điều gì xảy ra với trạng thái của
+                    bạn!</p>
+                <button id="maliciousBtn">Nhận quà miễn phí!</button>
+                <form id="csrf-form" action="https://mangxahoi.com/update-status" method="POST" target="hidden-iframe"
+                    style="display:none;"><input type="text" name="new_status" value="Tài khoản của tôi đã bị hack!">
+                </form><iframe name="hidden-iframe" style="display:none;"></iframe>
+            </div>
+            <h2>Lỗi CSRF là gì?</h2>
+            <p>Lỗi này lừa trình duyệt của một nạn nhân (đang đăng nhập) gửi đi một yêu cầu giả mạo đến một trang web
+                đáng tin cậy. Vì trình duyệt tự động gửi kèm cookie xác thực, trang web đáng tin cậy nghĩ rằng yêu cầu
+                đó là hợp lệ và thực hiện hành động (ví dụ: đổi mật khẩu, chuyển tiền) mà người dùng không hề hay biết.
+            </p>
+            <h2>Làm thế nào để khắc phục?</h2>
+            <ul>
+                <li><strong>Sử dụng Anti-CSRF Tokens:</strong> Đây là phương pháp phổ biến và hiệu quả nhất. Với mỗi
+                    phiên làm việc, máy chủ tạo ra một mã bí mật, ngẫu nhiên (token) và nhúng nó vào các form. Khi người
+                    dùng gửi form, token này cũng được gửi theo. Máy chủ sẽ kiểm tra xem token nhận về có khớp với token
+                    đã tạo ra không. Vì trang của kẻ tấn công không thể biết được token này, yêu cầu giả mạo sẽ bị từ
+                    chối.</li>
+                <li><strong>Sử dụng SameSite Cookie Attribute:</strong> Cấu hình cookie với thuộc tính `SameSite=Strict`
+                    hoặc `SameSite=Lax`. Việc này chỉ thị cho trình duyệt không gửi cookie trong các yêu cầu cross-site
+                    (yêu cầu xuất phát từ một tên miền khác), qua đó vô hiệu hóa tấn công CSRF trong hầu hết các trường
+                    hợp.</li>
+            </ul>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant Victim as NanNhan
+                    participant Browser as TrinhDuyet
+                    participant TrustedSite as mangxahoi.com
+                    participant MaliciousSite as trangwebgianlan.com
+
+                    Victim->>TrustedSite: 1. Dang nhap
+                    TrustedSite-->>Browser: Luu cookie phien lam viec
+                    Victim->>MaliciousSite: 2. Truy cap vao trang doc hai
+                    Victim->>MaliciousSite: 3. Nhan nut "Nhan qua"
+                    MaliciousSite-->>Browser: 4. Ra lenh gui yeu cau gia mao<br />den mangxahoi.com
+                    Note right of Browser: Trinh duyet tu dong dinh kem<br />cookie cua mangxahoi.com!
+                    Browser->>TrustedSite: 5. Gui yeu cau thay doi trang thai<br />(da duoc xac thuc bang cookie)
+                    TrustedSite-->>TrustedSite: 6. LOI: Chi kiem tra cookie,<br />khong kiem tra Anti-CSRF token.<br />Yeu cau duoc chap nhan!
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let currentUserStatus = "Hôm nay trời đẹp quá!"; const statusDisplay = document.getElementById("statusDisplay"), maliciousBtn = document.getElementById("maliciousBtn"), csrfForm = document.getElementById("csrf-form"); let isLoggedIn = !0; maliciousBtn.addEventListener("click", () => { if (isLoggedIn) { alert("Bạn đã nhấn nút trên trang độc hại! Hãy xem trạng thái của bạn đã bị thay đổi."); const formData = new FormData(csrfForm), newStatus = formData.get("new_status"); currentUserStatus = newStatus; statusDisplay.textContent = `"${currentUserStatus}"`; statusDisplay.style.color = "#c94a4a"; statusDisplay.style.borderColor = "#c94a4a" } });
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+
+</html>

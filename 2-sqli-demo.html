@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học về SQL Injection</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1d2b3a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        .demo-section {
+            background-color: #1d2b3a;
+        }
+
+        .lesson-section {
+            background-color: #f0f2f5;
+            color: #333;
+            min-height: auto;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: clamp(2em, 8vw, 3em);
+            margin-bottom: 20px;
+        }
+
+        .lesson-section h1,
+        .lesson-section h2 {
+            color: #333;
+        }
+
+        h2 {
+            color: #4a90e2;
+        }
+
+        .lesson-section h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        p {
+            font-size: clamp(1em, 4vw, 1.2em);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #bdc3c7;
+        }
+
+        .lesson-section p,
+        .lesson-section li {
+            color: #555;
+            text-align: left;
+        }
+
+        .lesson-section ul {
+            padding-left: 25px;
+        }
+
+        .payload-example {
+            font-size: 0.9em;
+            text-align: left;
+            color: #ffc107;
+            background-color: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: -10px;
+            margin-bottom: 25px;
+        }
+
+        .payload-example code {
+            background: #1a1a1a;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        #userIdInput {
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #34495e;
+            border-radius: 10px;
+            width: 100%;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            background-color: #1d2b3a;
+            color: white;
+            text-align: center;
+        }
+
+        #userIdInput:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: 600;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        #query-display {
+            background-color: #111;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+            word-wrap: break-word;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+        }
+
+        #results-area {
+            text-align: left;
+            background-color: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 50px;
+        }
+
+        .user-card {
+            background: #34495e;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        @media (min-width: 992px) {
+            .lesson-section .container {
+                max-width: 900px;
+            }
+
+            .mermaid-container {
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section demo-section">
+        <div class="container">
+            <h1>💉 Thử nghiệm SQL Injection 💉</h1>
+            <p>Giả lập tìm kiếm người dùng trong cơ sở dữ liệu để xem cách một câu lệnh SQL bị thao túng.</p>
+            <div class="payload-example">
+                <p style="margin: 5px 0;"><strong>Thử tìm kiếm hợp lệ:</strong> <code>1</code> (hoặc <code>2</code>,
+                    <code>3</code>)</p>
+                <hr style="border-color: #44586d; margin: 10px 0;">
+                <p style="margin: 5px 0;"><strong>Thử lệnh tấn công:</strong> <code>1 OR 1=1</code></p>
+            </div>
+            <input type="text" id="userIdInput" placeholder="Nhập ID người dùng tại đây...">
+            <button onclick="findUser()">Tìm kiếm</button>
+            <h2>Câu lệnh SQL (giả lập):</h2>
+            <div id="query-display">SELECT * FROM users WHERE id = ...</div>
+            <h2>Kết quả:</h2>
+            <div id="results-area"></div>
+        </div>
+    </div>
+    <div class="section lesson-section">
+        <div class="container">
+            <h1>SQL Injection là gì?</h1>
+            <p style="text-align:center;">Hãy tưởng tượng bạn yêu cầu nhân viên kho lấy hồ sơ "số 10". Thay vì chỉ ghi
+                "số 10", bạn lại ghi thêm: "số 10 HOẶC tất cả các số". Nhân viên kho không nghi ngờ, đọc cả câu lệnh và
+                mang ra cho bạn toàn bộ hồ sơ. Đó chính là SQL Injection: lừa ứng dụng thực thi những câu lệnh SQL mà kẻ
+                tấn công mong muốn.</p>
+            <h2>Một số dạng SQL Injection phổ biến</h2>
+            <ul>
+                <li><strong>In-band SQLi (Thấy ngay kết quả):</strong> Kẻ tấn công thực hiện tấn công và thấy kết quả
+                    trực tiếp trên trang web.</li>
+                <li><strong>Inferential SQLi (SQLi Suy luận / SQLi Mù):</strong> Kẻ tấn công không thấy kết quả trực
+                    tiếp mà phải hỏi cơ sở dữ liệu hàng loạt câu hỏi Đúng/Sai và suy luận ra dữ liệu.</li>
+                <li><strong>Out-of-band SQLi (Ngoài luồng):</strong> Kẻ tấn công buộc cơ sở dữ liệu phải tạo một kết nối
+                    mạng ra bên ngoài để gửi dữ liệu đi.</li>
+            </ul>
+            <p style="background-color: #e3f2fd; border-left: 5px solid #4a90e2; padding: 15px; margin-top: 30px;">
+                <strong>Lưu ý:</strong> Ví dụ trong demo này mô phỏng trường hợp kinh điển của <strong>In-band
+                    SQLi</strong>. Kẻ tấn công có thể thấy trực tiếp dữ liệu bị lộ ra, là dạng dễ hiểu nhất để bắt đầu.
+            </p>
+            <h2>Làm thế nào để khắc phục?</h2>
+            <ul>
+                <li><strong>Sử dụng Prepared Statements (Câu lệnh tham số hóa):</strong> Đây là cách hiệu quả nhất.
+                    Phương pháp này tách biệt hoàn toàn câu lệnh SQL (logic) và dữ liệu do người dùng nhập vào. Cơ sở dữ
+                    liệu sẽ không bao giờ nhầm lẫn dữ liệu là một phần của câu lệnh, do đó vô hiệu hóa hoàn toàn việc
+                    tiêm mã.</li>
+                <li><strong>Nguyên tắc đặc quyền tối thiểu (Principle of Least Privilege):</strong> Cung cấp cho tài
+                    khoản mà ứng dụng web dùng để kết nối CSDL quyền hạn thấp nhất có thể (ví dụ: chỉ cho phép đọc,
+                    không cho phép xóa).</li>
+            </ul>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant Attacker as Kẻ tấn công
+                    participant WebApp as Ứng dụng Web
+                    participant Database as Cơ sở dữ liệu
+                    Attacker->>WebApp: 1. Gửi yêu cầu với mã độc, ví dụ: "1 OR 1=1"
+                    Note right of WebApp: Ứng dụng ghép chuỗi một cách ngây thơ!
+                    WebApp->>Database: 2. Gửi câu lệnh SQL bị lỗi:<br />SELECT * FROM users WHERE id = 1 OR 1=1;
+                    Note right of Database: "WHERE 1=1" luôn đúng!
+                    Database-->>WebApp: 3. Trả về TẤT CẢ dữ liệu người dùng
+                    WebApp-->>Attacker: 4. Hiển thị toàn bộ dữ liệu nhạy cảm cho kẻ tấn công
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const fakeDatabase = [{ id: 1, name: "An Nguyen", email: "an.nguyen@example.com", credit_card: "4111..." }, { id: 2, name: "Binh Tran", email: "binh.tran@example.com", credit_card: "5222..." }, { id: 3, name: "Chi Le", email: "chi.le@example.com", credit_card: "4333..." }]; const queryDisplay = document.getElementById("query-display"), resultsArea = document.getElementById("results-area"); function findUser() { const userInput = document.getElementById("userIdInput").value; resultsArea.innerHTML = ""; let query = `SELECT * FROM users WHERE id = ${userInput};`; queryDisplay.textContent = query; let results = []; if (userInput.toUpperCase().includes("OR 1=1")) { results = fakeDatabase } else { const id = parseInt(userInput), user = fakeDatabase.find(u => u.id === id); user && results.push(user) } if (results.length > 0) { results.forEach(user => { const card = document.createElement("div"); card.className = "user-card"; card.innerHTML = `<strong>ID:</strong> ${user.id}<br><strong>Tên:</strong> ${user.name}<br><strong>Email:</strong> ${user.email}<br><strong>Thẻ tín dụng:</strong> ${user.credit_card}`; resultsArea.appendChild(card) }) } else { resultsArea.textContent = "Không tìm thấy người dùng nào." } };
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+
+</html>

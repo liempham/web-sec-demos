@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học về IDOR</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1d2b3a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 100vh
+        }
+
+        .demo-section {
+            background-color: #1d2b3a
+        }
+
+        .lesson-section {
+            background-color: #f0f2f5;
+            color: #333;
+            min-height: auto;
+            padding-bottom: 60px
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px
+        }
+
+        h1 {
+            font-size: clamp(2em, 8vw, 3em);
+            margin-bottom: 20px
+        }
+
+        .lesson-section h1,
+        .lesson-section h2 {
+            color: #333
+        }
+
+        .lesson-section h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px
+        }
+
+        p {
+            font-size: clamp(1em, 4vw, 1.2em);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #bdc3c7
+        }
+
+        .lesson-section p,
+        .lesson-section li {
+            color: #555;
+            text-align: left
+        }
+
+        .lesson-section ul {
+            padding-left: 25px
+        }
+
+        .step-box {
+            background-color: #2c3e50;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4a90e2;
+            text-align: left
+        }
+
+        .step-box h3 {
+            margin-top: 0
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-weight: 600;
+            border: none;
+            cursor: pointer
+        }
+
+        #viewOrderBtn1 {
+            background-color: #28a745
+        }
+
+        #viewOrderBtn2 {
+            background-color: #17a2b8
+        }
+
+        #order-details {
+            background-color: #111;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            min-height: 80px;
+            text-align: left;
+            font-family: 'Courier New', Courier, monospace
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 30px
+        }
+
+        @media (min-width:992px) {
+            .lesson-section .container {
+                max-width: 900px
+            }
+
+            .mermaid-container {
+                margin-top: 40px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section demo-section">
+        <div class="container">
+            <h1>🔒 Thử nghiệm Broken Access Control (IDOR) 🔒</h1>
+            <p>Bạn đang đăng nhập với tư cách `UserA`. Hãy thử xem đơn hàng của mình, sau đó tấn công để xem trộm đơn
+                hàng của `UserB`.</p>
+            <div class="step-box">
+                <h3>Bước 1: Xem đơn hàng của bạn</h3>
+                <p>Nhấn các nút bên dưới để xem các đơn hàng mà bạn được phép truy cập (ID: 101, 102).</p>
+                <div class="button-group">
+                    <button id="viewOrderBtn1" onclick="viewOrder(101)">Xem đơn hàng #101</button><button
+                        id="viewOrderBtn2" onclick="viewOrder(102)">Xem đơn hàng #102</button>
+                </div>
+            </div>
+            <div class="step-box">
+                <h3>Bước 2: Tấn công IDOR!</h3>
+                <p>Hệ thống không kiểm tra quyền sở hữu! Hãy mở <b>Developer Tools (F12)</b>, vào tab <b>Console</b> và
+                    gõ lệnh <code>viewOrder(201)</code> rồi Enter để xem trộm đơn hàng của UserB.</p>
+            </div>
+            <h2>Chi tiết đơn hàng:</h2>
+            <div id="order-details"></div>
+        </div>
+    </div>
+    <div class="section lesson-section">
+        <div class="container">
+            <h1>Broken Access Control là gì?</h1>
+            <p style="text-align:center;">Lỗi này xảy ra khi hệ thống không kiểm tra kỹ xem một người dùng có thực sự
+                được phép thực hiện một hành động hay không. Dạng phổ biến nhất là <strong>IDOR</strong>. Tưởng tượng
+                URL xem hóa đơn là `...?id=123`. Nếu bạn chỉ cần đổi thành `id=124` và xem được hóa đơn của người khác,
+                đó chính là IDOR.</p>
+            <h2>Một số dạng Lỗi Kiểm soát Truy cập</h2>
+            <ul>
+                <li><strong>IDOR:</strong> Thay đổi một tham số trong URL (như ID) để truy cập vào dữ liệu của người
+                    dùng khác.</li>
+                <li><strong>Path Traversal:</strong> Thao túng các tham số file để truy cập các tệp tin ngoài thư mục
+                    cho phép.</li>
+                <li><strong>Leo thang đặc quyền (Privilege Escalation):</strong> Một người dùng thường có thể thực hiện
+                    các chức năng chỉ dành cho quản trị viên.</li>
+            </ul>
+            <p style="background-color: #e3f2fd; border-left: 5px solid #4a90e2; padding: 15px; margin-top: 30px;">
+                <strong>Lưu ý:</strong> Ví dụ trong demo này tập trung vào trường hợp kinh điển của
+                <strong>IDOR</strong>, nơi bạn có thể truy cập vào một "đối tượng" (đơn hàng) của người khác chỉ bằng
+                cách thay đổi ID.
+            </p>
+            <h2>Làm thế nào để khắc phục?</h2>
+            <ul>
+                <li><strong>Luôn kiểm tra quyền sở hữu ở phía máy chủ:</strong> Với mọi yêu cầu truy cập dữ liệu, máy
+                    chủ phải xác minh: "Người dùng đang đăng nhập (`loggedInUser`) có phải là chủ sở hữu của đối tượng
+                    (`order.owner`) mà họ đang yêu cầu không?". Không bao giờ tin tưởng vào ID do người dùng gửi lên.
+                </li>
+                <li><strong>Sử dụng ID không thể đoán được:</strong> Thay vì dùng các ID tuần tự (1, 2, 3), hãy dùng các
+                    chuỗi định danh ngẫu nhiên, phức tạp (như UUIDs), khiến kẻ tấn công không thể đoán ra ID của các đối
+                    tượng khác.</li>
+            </ul>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant Attacker as Người dùng A (Kẻ tấn công)
+                    participant WebApp as Ứng dụng Web
+                    participant Database as Cơ sở dữ liệu
+                    Attacker->>WebApp: 1. Yêu cầu xem đơn hàng của mình: `viewOrder(101)`
+                    WebApp->>Database: Lấy đơn hàng có ID = 101
+                    Database-->>WebApp: Trả về chi tiết đơn hàng #101
+                    WebApp-->>Attacker: Hiển thị chi tiết đơn hàng #101
+                    Note right of Attacker: Attacker đoán hoặc thử ID khác
+                    Attacker->>WebApp: 2. Gửi yêu cầu xem đơn hàng của người khác: `viewOrder(201)`
+                    Note right of WebApp: LỖI: Không kiểm tra<br />người dùng A có sở hữu đơn hàng 201 không!
+                    WebApp->>Database: Lấy đơn hàng có ID = 201
+                    Database-->>WebApp: Trả về chi tiết đơn hàng #201
+                    WebApp-->>Attacker: 3. Hiển thị thông tin đơn hàng<br />của người dùng B cho kẻ tấn công
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const fakeOrders = { 101: { owner: 'UserA', item: 'Laptop Gaming', amount: '35,000,000 VND' }, 102: { owner: 'UserA', item: 'Bàn phím cơ', amount: '2,500,000 VND' }, 201: { owner: 'UserB', item: 'Điện thoại mới', amount: '28,000,000 VND', note: 'Giao hàng bí mật, đừng cho UserA biết!' } }; const loggedInUser = 'UserA', detailsArea = document.getElementById("order-details"); function viewOrder(orderId) { const order = fakeOrders[orderId]; detailsArea.innerHTML = ''; if (order) { let content = `<strong>Đơn hàng ID:</strong> ${orderId}<br><strong>Sản phẩm:</strong> ${order.item}<br><strong>Giá trị:</strong> ${order.amount}`; order.note && (content += `<br><strong style="color:#e74c3c;">Ghi chú riêng tư:</strong> ${order.note}`); order.owner !== loggedInUser && (content += `<br><p style="color: #ffc107; margin-top:10px;"><strong>CẢNH BÁO:</strong> Bạn đã truy cập thành công vào dữ liệu của ${order.owner}!</p>`); detailsArea.innerHTML = content } else { detailsArea.textContent = `Không tìm thấy đơn hàng với ID: ${orderId}` } };
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+
+</html>

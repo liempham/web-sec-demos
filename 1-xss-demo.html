@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học về XSS!</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1d2b3a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        .demo-section {
+            background-color: #1d2b3a;
+        }
+
+        .lesson-section {
+            background-color: #f0f2f5;
+            color: #333;
+            min-height: auto;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+        }
+
+        h1 {
+            font-size: clamp(2em, 8vw, 3em);
+            margin-bottom: 20px;
+        }
+
+        .lesson-section h1,
+        .lesson-section h2 {
+            color: #333;
+        }
+
+        .lesson-section h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        p {
+            font-size: clamp(1em, 4vw, 1.2em);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #bdc3c7;
+        }
+
+        .lesson-section p,
+        .lesson-section li {
+            color: #555;
+            text-align: left;
+        }
+
+        .lesson-section ul {
+            padding-left: 25px;
+        }
+
+        .payload-example {
+            font-size: 0.9em;
+            color: #ffc107;
+            background-color: #2c3e50;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: -10px;
+            margin-bottom: 25px;
+        }
+
+        .payload-example code {
+            word-break: break-all;
+        }
+
+        #nameInput {
+            padding: 18px;
+            font-size: 1.1em;
+            border: 2px solid #34495e;
+            border-radius: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+        }
+
+        #nameInput:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        button {
+            padding: 18px 35px;
+            font-size: 1.2em;
+            font-weight: 600;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #greetingMessage {
+            margin-top: 30px;
+            font-size: clamp(1.2em, 5vw, 1.7em);
+            font-weight: bold;
+            min-height: 50px;
+        }
+
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: explode 1.2s ease-out forwards;
+        }
+
+        @keyframes explode {
+            to {
+                transform: scale(35);
+                opacity: 0;
+            }
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 30px;
+            transform: scale(1.7);
+            transform-origin: top center;
+            margin-bottom: 100px;
+        }
+
+        @media (min-width: 992px) {
+            .lesson-section .container {
+                max-width: 900px;
+            }
+
+            .mermaid-container {
+                transform: none;
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section demo-section">
+        <div class="container">
+            <h1>🎉 Thử nghiệm XSS 🎉</h1>
+            <p>Nhập tên để xem lời chúc, hoặc dán một trong các mã độc dưới đây để xem điều gì xảy ra!</p>
+            <div class="payload-example">
+                <p style="margin: 5px 0;"><strong>Bắn pháo hoa:</strong>
+                    <code>&lt;img src=x onerror="setInterval(createFirework, 150)"&gt;</code></p>
+                <hr style="border-color: #44586d; margin: 10px 0;">
+                <p style="margin: 5px 0;"><strong>Ăn cắp cookie (giả lập):</strong>
+                    <code>&lt;img src=x onerror="alert('Cookie của bạn có thể đã bị gửi đi nơi khác!')"&gt;</code></p>
+            </div>
+            <input type="text" id="nameInput" placeholder="Nhập tại đây và nhấn Enter...">
+            <button onclick="displayGreeting()">Gửi lời chúc!</button>
+            <div id="greetingMessage"></div>
+        </div>
+    </div>
+    <div class="section lesson-section">
+        <div class="container">
+            <h1>Cross-Site Scripting (XSS) là gì?</h1>
+            <p style="text-align:center;">XSS xảy ra khi kẻ xấu lừa trang web để viết lên đó một "câu thần chú" (mã độc)
+                thay vì một lời nhắn bình thường. Khi người khác đọc "câu thần chú" đó, nó sẽ tự động được thực thi trên
+                trình duyệt của họ.</p>
+            <h2>Ba loại XSS chính</h2>
+            <ul>
+                <li><strong>Stored XSS (XSS Lưu trữ):</strong> Mã độc được lưu trữ vĩnh viễn trên máy chủ. Bất kỳ ai xem
+                    nội dung đó đều sẽ bị tấn công. Đây là loại nguy hiểm nhất.</li>
+                <li><strong>Reflected XSS (XSS Phản chiếu):</strong> Mã độc nằm trong một đường link URL mà kẻ tấn công
+                    phải lừa nạn nhân nhấp vào.</li>
+                <li><strong>DOM-based XSS (XSS dựa trên DOM):</strong> Lỗ hổng nằm hoàn toàn ở phía client (trong mã
+                    JavaScript của trang).</li>
+            </ul>
+            <p style="background-color: #e3f2fd; border-left: 5px solid #4a90e2; padding: 15px; margin-top: 30px;">
+                <strong>Lưu ý:</strong> Ví dụ trong demo này minh họa cơ chế cốt lõi của XSS, hoạt động giống như một
+                cuộc tấn công <strong>DOM-based XSS</strong> đơn giản và dễ hiểu nhất.
+            </p>
+            <h2>Làm thế nào để khắc phục?</h2>
+            <ul>
+                <li><strong>Mã hóa đầu ra (Output Encoding):</strong> Luôn xử lý dữ liệu do người dùng nhập vào như là
+                    "văn bản thuần túy", không bao giờ là "mã lệnh". Trước khi hiển thị, hãy chuyển các ký tự đặc biệt
+                    như <code>&lt;</code> và <code>&gt;</code> thành các thực thể an toàn như <code>&amp;lt;</code> và
+                    <code>&amp;gt;</code>.</li>
+                <li><strong>Sử dụng Content Security Policy (CSP):</strong> Cấu hình một HTTP header để chỉ cho trình
+                    duyệt biết những nguồn script nào là đáng tin cậy và được phép thực thi.</li>
+            </ul>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant Attacker as Kẻ tấn công
+                    participant Victim as Nạn nhân
+                    participant Website as Website có lỗ hổng
+                    participant AttackerServer as Máy chủ của Attacker
+                    Attacker->>Website: 1. Đăng bình luận chứa mã độc (script)
+                    Website-->>Attacker: Lưu bình luận thành công
+                    Note over Victim, Website: Một thời gian sau...
+                    Victim->>Website: 2. Yêu cầu xem trang có bình luận
+                    Website-->>Victim: 3. Trả về trang web chứa mã độc
+                    Note right of Victim: Trình duyệt của Nạn nhân thực thi mã độc!
+                    Victim->>AttackerServer: 4. Script gửi cookie của Nạn nhân đến máy chủ của Attacker
+                    AttackerServer-->>Attacker: 5. Hacker nhận được cookie!
+                    Note over Attacker, Website: Chiếm quyền phiên làm việc
+                    Attacker->>Website: 6. Dùng cookie đã cắp để đăng nhập với tư cách Nạn nhân
+                    Website-->>Attacker: Chấp nhận, cấp quyền truy cập tài khoản!
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function displayGreeting() { const userInput = document.getElementById("nameInput").value; const messageDiv = document.getElementById("greetingMessage"); userInput.trim() !== "" && (messageDiv.innerHTML = "<h2>Chúc mừng sinh nhật, " + userInput + "!</h2>") } function createFirework() { const firework = document.createElement("div"); firework.className = "firework"; firework.style.left = Math.random() * window.innerWidth + "px"; firework.style.top = Math.random() * (window.scrollY + window.innerHeight) + "px"; firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`; document.body.appendChild(firework); setTimeout(() => { firework.remove() }, 1200) } const inputField = document.getElementById("nameInput"); inputField.addEventListener("keydown", function (event) { event.key === "Enter" && displayGreeting() });
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảo Mật Web qua Demo cơ bản</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            color: #4a90e2;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #aaa;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .lesson-card {
+            background-color: #252525;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .lesson-card h2 {
+            font-size: 1.5em;
+            color: #4a90e2;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .lesson-card p {
+            color: #bbb;
+            flex-grow: 1;
+            /* Đẩy button xuống dưới */
+            line-height: 1.6;
+        }
+
+        .lesson-card a {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #4a90e2;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .lesson-card a.disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .lesson-card a:not(.disabled):hover {
+            background-color: #357abd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>Bảo Mật Web qua Demo cơ bản</h1>
+        <p>Các bài học tương tác về những lỗ hổng bảo mật web phổ biến nhất, được giải thích một cách đơn
+            giản và trực quan.</p>
+    </header>
+
+    <main class="lesson-grid">
+
+        <div class="lesson-card">
+            <h2>1. Cross-Site Scripting (XSS)</h2>
+            <p>Lỗi xảy ra khi trang web cho phép kẻ tấn công chèn các đoạn mã độc (scripts) vào nội dung, và mã này sẽ
+                được thực thi trên trình duyệt của người dùng khác.</p>
+            <a href="./1-xss-demo.html" target="_blank">Xem bài học & Demo</a>
+        </div>
+
+        <div class="lesson-card">
+            <h2>2. SQL Injection (SQLi)</h2>
+            <p>Lỗ hổng cho phép kẻ tấn công chèn các câu lệnh SQL tùy ý vào truy vấn của ứng dụng, có thể dùng để xem,
+                sửa, xóa dữ liệu trong cơ sở dữ liệu.</p>
+            <a href="./2-sqli-demo.html" target="_blank">Xem bài học & Demo</a>
+        </div>
+
+        <div class="lesson-card">
+            <h2>3. Broken Authentication</h2>
+            <p>Các sai sót trong việc quản lý phiên đăng nhập và xác thực người dùng, cho phép kẻ tấn công mạo danh hoặc
+                chiếm quyền điều khiển tài khoản người khác.</p>
+            <a href="./3-broken-auth-demo.html" target="_blank">Xem bài học & Demo</a>
+        </div>
+
+        <div class="lesson-card">
+            <h2>4. Broken Access Control (IDOR)</h2>
+            <p>Lỗi cho phép người dùng truy cập vào các tài nguyên hoặc thực hiện các hành động mà họ không được phép,
+                ví dụ xem thông tin của người dùng khác.</p>
+            <a href="./4-idor-demo.html" target="_blank">Xem bài học & Demo</a>
+        </div>
+
+        <div class="lesson-card">
+            <h2>5. Cross-Site Request Forgery (CSRF)</h2>
+            <p>Cuộc tấn công buộc trình duyệt của nạn nhân (đã đăng nhập) gửi đi một yêu cầu giả mạo đến một trang web,
+                thực hiện các hành động không mong muốn.</p>
+            <a href="./5-csrf-demo.html" target="_blank">Xem bài học & Demo</a>
+        </div>
+
+        <div class="lesson-card">
+            <h2>6. Security Misconfiguration</h2>
+            <p>Các lỗi cấu hình sai trên máy chủ, framework, hoặc ứng dụng, chẳng hạn như để lộ thông tin nhạy cảm qua
+                các thông báo lỗi hoặc giữ các tài khoản mặc định.</p>
+            <a href="./6-misconfig-demo.html" target="_blank">Xem bài học & Demo</a>
+        </div>
+
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học về Broken Authentication</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1d2b3a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        .demo-section {
+            background-color: #1d2b3a;
+        }
+
+        .lesson-section {
+            background-color: #f0f2f5;
+            color: #333;
+            min-height: auto;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        h1 {
+            font-size: clamp(2em, 8vw, 3em);
+            margin-bottom: 20px;
+        }
+
+        .lesson-section h1,
+        .lesson-section h2 {
+            color: #333;
+        }
+
+        h2 {
+            color: #4a90e2;
+        }
+
+        .lesson-section h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        p {
+            font-size: clamp(1em, 4vw, 1.2em);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #bdc3c7;
+        }
+
+        .lesson-section p,
+        .lesson-section li {
+            color: #555;
+            text-align: left;
+        }
+
+        .lesson-section ul {
+            padding-left: 25px;
+        }
+
+        .step-box {
+            background-color: #2c3e50;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4a90e2;
+            text-align: left;
+        }
+
+        .step-box h3 {
+            margin-top: 0;
+        }
+
+        #sessionTokenInput,
+        #loginAsButton,
+        #viewInfoButton {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        #loginAsButton {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #viewInfoButton {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #sessionTokenInput {
+            background-color: #1d2b3a;
+            color: #ffc107;
+            text-align: center;
+            border: 2px solid #34495e;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        #account-info {
+            background-color: #111;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            min-height: 80px;
+            text-align: left;
+        }
+
+        .info-card {
+            border: 1px solid #555;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        @media (min-width: 992px) {
+            .lesson-section .container {
+                max-width: 900px;
+            }
+
+            .mermaid-container {
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section demo-section">
+        <div class="container">
+            <h1>🔑 Thử nghiệm Lỗi Xác thực 🔑</h1>
+            <p>Demo này mô phỏng một hệ thống dùng "Session Token" có thể dự đoán được. Hãy làm theo các bước để chiếm
+                quyền tài khoản của người khác.</p>
+            <div class="step-box">
+                <h3>Bước 1: Đăng nhập</h3>
+                <p>Nhấn nút bên dưới để đăng nhập với tư cách `user101` và nhận Session Token.</p><button
+                    id="loginAsButton" onclick="login()">Đăng nhập với tài khoản 'user101'</button>
+            </div>
+            <div class="step-box">
+                <h3>Bước 2: Dùng Token để xem thông tin</h3>
+                <p>Token của bạn đã được điền sẵn. Nhấn nút "Xem thông tin" để xem dữ liệu tài khoản của bạn.</p><input
+                    type="text" id="sessionTokenInput" placeholder="Session Token sẽ hiện ở đây..."><button
+                    id="viewInfoButton" onclick="viewInfo()">Xem thông tin tài khoản</button>
+            </div>
+            <div class="step-box">
+                <h3>Bước 3: Tấn công!</h3>
+                <p>Bây giờ, hãy sửa Token trong ô ở Bước 2 từ <code>user101</code> thành <code>user102</code> và nhấn
+                    lại nút "Xem thông tin".</p>
+            </div>
+            <h2>Thông tin tài khoản bí mật:</h2>
+            <div id="account-info"></div>
+        </div>
+    </div>
+    <div class="section lesson-section">
+        <div class="container">
+            <h1>Broken Authentication là gì?</h1>
+            <p style="text-align:center;">Hãy tưởng tượng Session Token là chìa khóa phòng khách sạn. Một hệ thống tốt
+                sẽ phát chìa khóa ngẫu nhiên. Một hệ thống lỗi lại phát chìa khóa theo thứ tự: "key101", "key102". Nếu
+                có "key101", bạn có thể đoán ra "key102". Lỗi này cho phép kẻ tấn công mạo danh người dùng khác.</p>
+            <h2>Một số dạng Lỗi Xác thực phổ biến</h2>
+            <ul>
+                <li><strong>Tấn công Brute-force:</strong> Cho phép thử đăng nhập với hàng triệu mật khẩu mà không bị
+                    giới hạn.</li>
+                <li><strong>Session Token có thể dự đoán được:</strong> Hệ thống tạo ra các token theo một quy luật đơn
+                    giản.</li>
+                <li><strong>Phiên làm việc không hết hạn:</strong> Token không bị vô hiệu hóa sau khi người dùng đăng
+                    xuất.</li>
+                <li><strong>Gửi thông tin nhạy cảm qua kênh không mã hóa (HTTP).</strong></li>
+            </ul>
+            <p style="background-color: #e3f2fd; border-left: 5px solid #4a90e2; padding: 15px; margin-top: 30px;">
+                <strong>Lưu ý:</strong> Ví dụ trong demo này tập trung vào trường hợp kinh điển <strong>"Session Token
+                    có thể dự đoán được"</strong>.
+            </p>
+            <h2>Làm thế nào để khắc phục?</h2>
+            <ul>
+                <li><strong>Sử dụng Session ID ngẫu nhiên, phức tạp:</strong> Tạo ra các session token dài, ngẫu nhiên
+                    bằng các thuật toán an toàn (cryptographically secure random generator) để không thể đoán được.</li>
+                <li><strong>Vô hiệu hóa token phía máy chủ:</strong> Khi người dùng đăng xuất hoặc đổi mật khẩu, token
+                    cũ phải bị vô hiệu hóa ngay lập tức trên máy chủ.</li>
+                <li><strong>Giới hạn số lần đăng nhập sai (Rate Limiting):</strong> Khóa tài khoản tạm thời sau một số
+                    lần đăng nhập thất bại để chống brute-force.</li>
+            </ul>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant Attacker as Kẻ tấn công
+                    participant WebApp as Ứng dụng Web
+                    Attacker->>WebApp: 1. Đăng nhập với tài khoản user101
+                    WebApp-->>Attacker: 2. Cấp Token có thể dự đoán:<br />"session-token-for-user101"
+                    Note right of Attacker: Attacker nhận thấy quy luật<br />và tự tạo ra token mới!
+                    Attacker->>WebApp: 3. Gửi yêu cầu với Token giả mạo:<br />"session-token-for-user102"
+                    Note right of WebApp: Ứng dụng xác thực token hợp lệ<br />nhưng không kiểm tra chủ sở hữu!
+                    WebApp-->>Attacker: 4. Trả về thông tin bí mật<br />của tài khoản user102
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const fakeAccounts = { 'user101': { name: 'An Nguyen', info: 'Số dư tài khoản: 15,000,000 VND' }, 'user102': { name: 'Binh Tran (Nạn nhân)', info: 'Mật khẩu email: Binh@123456' } }; const tokenInput = document.getElementById("sessionTokenInput"), infoArea = document.getElementById("account-info"); function login() { const token = 'session-token-for-user101'; tokenInput.value = token; infoArea.innerHTML = '<p style="color: #28a745;">Đăng nhập thành công! Hãy xem thông tin ở Bước 2.</p>' } function viewInfo() { const token = tokenInput.value; infoArea.innerHTML = ''; if (!token || !token.startsWith('session-token-for-')) { infoArea.innerHTML = '<p style="color: #e74c3c;">Token không hợp lệ!</p>'; return } const username = token.replace('session-token-for-', ''), account = fakeAccounts[username]; if (account) { const card = document.createElement("div"); card.className = "info-card"; card.innerHTML = `<h3>Thông tin của: ${account.name}</h3><p>${account.info}</p>`; if (username !== 'user101') { card.style.borderColor = '#e74c3c'; card.innerHTML += '<p style="color: #ffc107;"><strong>Cảnh báo:</strong> Bạn đang xem thông tin của người dùng khác!</p>' } infoArea.appendChild(card) } else { infoArea.innerHTML = '<p style="color: #e74c3c;">Không tìm thấy thông tin cho token này.</p>' } };
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học về Security Misconfiguration</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1d2b3a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 100vh
+        }
+
+        .demo-section {
+            background-color: #1d2b3a
+        }
+
+        .lesson-section {
+            background-color: #f0f2f5;
+            color: #333;
+            min-height: auto;
+            padding-bottom: 60px
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px
+        }
+
+        h1 {
+            font-size: clamp(2em, 8vw, 3em);
+            margin-bottom: 20px
+        }
+
+        .lesson-section h1,
+        .lesson-section h2 {
+            color: #333
+        }
+
+        .lesson-section h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px
+        }
+
+        p {
+            font-size: clamp(1em, 4vw, 1.2em);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #bdc3c7
+        }
+
+        .lesson-section p,
+        .lesson-section li {
+            color: #555;
+            text-align: left
+        }
+
+        .lesson-section ul {
+            padding-left: 25px
+        }
+
+        button {
+            padding: 15px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: background-color .3s ease
+        }
+
+        #errorBtn {
+            background-color: #ffc107;
+            color: #333
+        }
+
+        #dirBtn {
+            background-color: #17a2b8;
+            color: white
+        }
+
+        #results {
+            background-color: #111;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100px;
+            white-space: pre-wrap;
+            border: 1px solid #333
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 30px
+        }
+
+        @media (min-width:992px) {
+            .lesson-section .container {
+                max-width: 900px
+            }
+
+            .mermaid-container {
+                margin-top: 40px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section demo-section">
+        <div class="container">
+            <h1>⚙️ Thử nghiệm Security Misconfiguration ⚙️</h1>
+            <p>Demo này mô phỏng hai lỗi cấu hình sai phổ biến: để lộ thông tin nhạy cảm qua thông báo lỗi và bật chế độ
+                liệt kê thư mục.</p>
+            <button id="errorBtn" onclick="triggerError()">Gây ra lỗi để xem thông tin gỡ lỗi (debug)</button>
+            <button id="dirBtn" onclick="listDirectory()">Truy cập vào một thư mục bị cấu hình sai</button>
+            <h2>Kết quả từ máy chủ:</h2>
+            <div id="results"></div>
+        </div>
+    </div>
+    <div class="section lesson-section">
+        <div class="container">
+            <h1>Security Misconfiguration là gì?</h1>
+            <p style="text-align:center;">Lỗi cấu hình sai giống như việc bạn quên khóa cửa chính, để cửa sổ mở toang,
+                hoặc để lại bản đồ toàn bộ ngôi nhà ngay trước cửa. Đây không phải là lỗi trong thiết kế, mà là lỗi
+                trong quá trình "sử dụng" và "bảo trì" nó. Kẻ xấu có thể dễ dàng lợi dụng những sơ hở này để đột nhập.
+            </p>
+            <h2>Một số dạng Lỗi Cấu hình sai phổ biến</h2>
+            <ul>
+                <li><strong>Bật chế độ gỡ lỗi (debug) trên môi trường thật:</strong> Làm lộ các thông báo lỗi chi tiết,
+                    stack trace...</li>
+                <li><strong>Bật chế độ liệt kê thư mục (Directory Listing):</strong> Cho phép bất kỳ ai cũng có thể xem
+                    danh sách các file trong một thư mục.</li>
+                <li><strong>Sử dụng tài khoản và mật khẩu mặc định</strong> của các thiết bị, framework, hoặc cơ sở dữ
+                    liệu.</li>
+                <li><strong>Thiếu các HTTP Security Headers</strong> cần thiết để bảo vệ trình duyệt.</li>
+            </ul>
+            <p style="background-color: #e3f2fd; border-left: 5px solid #4a90e2; padding: 15px; margin-top: 30px;">
+                <strong>Lưu ý:</strong> Demo này minh họa hai trường hợp rất phổ biến: <strong>lộ thông tin qua lỗi
+                    debug</strong> và <strong>liệt kê thư mục</strong>.
+            </p>
+            <h2>Làm thế nào để khắc phục?</h2>
+            <ul>
+                <li><strong>Tắt chế độ debug trên môi trường production:</strong> Luôn cấu hình máy chủ để hiển thị một
+                    trang báo lỗi chung chung, không chứa thông tin kỹ thuật. Ghi lại lỗi chi tiết vào một file log chỉ
+                    có quản trị viên mới truy cập được.</li>
+                <li><strong>Vô hiệu hóa Directory Listing:</strong> Cấu hình máy chủ web để từ chối các yêu cầu truy cập
+                    trực tiếp vào một thư mục không có file chỉ định (như index.html).</li>
+                <li><strong>Sử dụng quy trình hardening:</strong> Luôn tuân theo các hướng dẫn "harden" bảo mật cho
+                    mọi thành phần trong hệ thống: hệ điều hành, máy chủ web, framework, cơ sở dữ liệu. Điều này bao gồm
+                    việc thay đổi tất cả mật khẩu mặc định.</li>
+            </ul>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant Attacker as KeTanCong
+                    participant WebServer as WebServer_CauHinhLoi
+
+                    Attacker->>WebServer: 1. Gui mot yeu cau gay loi
+                    Note right of WebServer: May chu gap loi va duoc cau hinh<br />de hien thi thong tin debug chi tiet.
+                    WebServer-->>Attacker: 2. Tra ve thong bao loi chua:<br />- Duong dan file: /var/www/app/src<br />-Ten CSDL: prod_db<br />- Phien ban: PHP 8.1.2
+                    Note right of Attacker: Attacker thu thap thong tin<br />de chuan bi cho cac dot tan cong sau.
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const resultsDiv = document.getElementById("results"); function triggerError() {
+            const detailedError = `
+PHATAL ERROR: Uncaught PDOException in /var/www/html/src/Database.php:42
+Stack trace:
+#0 /var/www/html/src/Database.php(42): PDO->__construct('mysql:host=loca...', 'admin_user', 's3cr3t_p@ss')
+#1 /var/www/html/src/User.php(18): Database->connect()
+#2 /var/www/html/index.php(7): User->get(1337)
+#3 {main}
+  thrown in /var/www/html/src/Database.php on line 42
+
+Apache/2.4.52 (Ubuntu) Server at example.com Port 443
+            `; resultsDiv.style.color = "#e74c3c"; resultsDiv.textContent = detailedError
+        } function listDirectory() {
+            const directoryListing = `
+Index of /uploads/
+
+../
+2024-01-15 10:30   3458   image_01.jpg
+2024-02-10 17:12   4123   image_02.png
+2024-03-20 09:00   12345  users_backup.sql.zip  <-- FILE NHẠY CẢM
+2024-04-01 11:45   987    report.pdf
+            `; resultsDiv.style.color = "#ffc107"; resultsDiv.textContent = directoryListing
+        };
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+
+</html>
