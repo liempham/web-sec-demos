@@ -91,6 +91,18 @@
             font-size: 1em;
         }
 
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffeeba;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            color: #856404;
+            font-size: 1em;
+            line-height: 1.5;
+            border-radius: 0 8px 8px 0;
+        }
+
         button {
             padding: 12px 25px;
             font-size: 1.1em;
@@ -158,7 +170,8 @@
                 </p>
                 <hr style="border-color: #44586d; margin: 10px 0;">
                 <p style="margin: 5px 0;"><strong>Thử lệnh tấn công:</strong>
-                    <code>http://localhost/server-status</code></p>
+                    <code>http://localhost/server-status</code>
+                </p>
             </div>
             <div class="input-group">
                 <input type="text" id="imageUrl" value="https://example.com/avatar.jpg" size="50">
@@ -176,6 +189,10 @@
                 tối mật ngay trong công ty (`http://localhost/thong-tin-mat`). Người nhân viên, vốn có quyền đi
                 lại tự do trong công ty, sẽ ngoan ngoãn đi lấy tài liệu đó và đưa cho bạn. SSRF là việc lừa máy chủ thực
                 hiện một yêu cầu đến một địa chỉ mà kẻ tấn công không thể truy cập trực tiếp.</p>
+            <div class="note">
+                Vì đây là lỗ hổng ở phía máy chủ (backend), nó ảnh hưởng đến
+                <strong>tất cả các loại client</strong>, bao gồm cả trình duyệt web và ứng dụng di động.
+            </div>
             <h2>Rủi ro của SSRF?</h2>
             <ul>
                 <li>Quét các cổng và dịch vụ đang chạy trên mạng nội bộ của máy chủ.</li>

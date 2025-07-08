@@ -165,6 +165,18 @@
                 margin-bottom: 0;
             }
         }
+
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffeeba;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            color: #856404;
+            font-size: 1em;
+            line-height: 1.5;
+            border-radius: 0 8px 8px 0;
+        }
     </style>
 </head>
 
@@ -178,7 +190,7 @@
                     <code>&lt;img src=x onerror="setInterval(createFirework, 150)"&gt;</code></p>
                 <hr style="border-color: #44586d; margin: 10px 0;">
                 <p style="margin: 5px 0;"><strong>Ăn cắp cookie (giả lập):</strong>
-                    <code>&lt;img src=x onerror="alert('Cookie của bạn có thể đã bị gửi đi nơi khác!')"&gt;</code></p>
+                    <code>&lt;img src=x onerror="alert('Cookie của bạn có thể đã bị gửi đi!')"&gt;</code></p>
             </div>
             <input type="text" id="nameInput" placeholder="Nhập tại đây và nhấn Enter...">
             <button onclick="displayGreeting()">Gửi lời chúc!</button>
@@ -187,10 +199,13 @@
     </div>
     <div class="section lesson-section">
         <div class="container">
-            <h1>Cross-Site Scripting (XSS) là gì?</h1>
+            <h1>A03: Injection (XSS)</h1>
             <p style="text-align:center;">XSS xảy ra khi kẻ xấu lừa trang web để viết lên đó một "câu thần chú" (mã độc)
                 thay vì một lời nhắn bình thường. Khi người khác đọc "câu thần chú" đó, nó sẽ tự động được thực thi trên
                 trình duyệt của họ.</p>
+            <div class="note"><strong>Lưu ý quan trọng:</strong> XSS là một lỗ hổng <strong>dành riêng cho trình duyệt
+                    web (browser)</strong> hoặc các thành phần tương tự như `WebView` trong ứng dụng di động. Các ứng
+                dụng di động thuần (native mobile app) thường không bị ảnh hưởng bởi loại tấn công này.</div>
             <h2>Ba loại XSS chính</h2>
             <ul>
                 <li><strong>Stored XSS (XSS Lưu trữ):</strong> Mã độc được lưu trữ vĩnh viễn trên máy chủ. Bất kỳ ai xem

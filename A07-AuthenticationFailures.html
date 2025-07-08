@@ -93,6 +93,18 @@
             margin-top: 0;
         }
 
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffeeba;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            color: #856404;
+            font-size: 1em;
+            line-height: 1.5;
+            border-radius: 0 8px 8px 0;
+        }
+
         #sessionTokenInput,
         #loginAsButton,
         #viewInfoButton {
@@ -191,6 +203,10 @@
             <p style="text-align:center;">Hãy tưởng tượng Session Token là chìa khóa phòng khách sạn. Một hệ thống tốt
                 sẽ phát chìa khóa ngẫu nhiên. Một hệ thống lỗi lại phát chìa khóa theo thứ tự: "key101", "key102". Nếu
                 có "key101", bạn có thể đoán ra "key102". Lỗi này cho phép kẻ tấn công mạo danh người dùng khác.</p>
+            <div class="note">
+                Vì đây là lỗ hổng ở phía máy chủ (backend), nó ảnh hưởng đến
+                <strong>tất cả các loại client</strong>, bao gồm cả trình duyệt web và ứng dụng di động.
+            </div>
             <h2>Một số dạng Lỗi Xác thực phổ biến</h2>
             <ul>
                 <li><strong>Tấn công Brute-force:</strong> Cho phép thử đăng nhập với hàng triệu mật khẩu mà không bị

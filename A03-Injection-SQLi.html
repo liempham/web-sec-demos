@@ -97,6 +97,18 @@
             border-radius: 4px;
         }
 
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffeeba;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            color: #856404;
+            font-size: 1em;
+            line-height: 1.5;
+            border-radius: 0 8px 8px 0;
+        }
+
         #userIdInput {
             padding: 15px;
             font-size: 1.1em;
@@ -184,7 +196,8 @@
             <p>Giả lập tìm kiếm người dùng trong cơ sở dữ liệu để xem cách một câu lệnh SQL bị thao túng.</p>
             <div class="payload-example">
                 <p style="margin: 5px 0;"><strong>Thử tìm kiếm hợp lệ:</strong> <code>1</code> (hoặc <code>2</code>,
-                    <code>3</code>)</p>
+                    <code>3</code>)
+                </p>
                 <hr style="border-color: #44586d; margin: 10px 0;">
                 <p style="margin: 5px 0;"><strong>Thử lệnh tấn công:</strong> <code>1 OR 1=1</code></p>
             </div>
@@ -203,6 +216,10 @@
                 "số 10", bạn lại ghi thêm: "số 10 HOẶC tất cả các số". Nhân viên kho không nghi ngờ, đọc cả câu lệnh và
                 mang ra cho bạn toàn bộ hồ sơ. Đó chính là SQL Injection: lừa ứng dụng thực thi những câu lệnh SQL mà kẻ
                 tấn công mong muốn.</p>
+            <div class="note">
+                Vì đây là lỗ hổng ở phía máy chủ (backend), nó ảnh hưởng đến
+                <strong>tất cả các loại client</strong>, bao gồm cả trình duyệt web và ứng dụng di động.
+            </div>
             <h2>Một số dạng SQL Injection phổ biến</h2>
             <ul>
                 <li><strong>In-band SQLi (Thấy ngay kết quả):</strong> Kẻ tấn công thực hiện tấn công và thấy kết quả

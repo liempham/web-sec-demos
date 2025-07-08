@@ -50,6 +50,13 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
+        .lesson-card.foundation-card {
+            grid-column: 1 / -1;
+            /* Thẻ này sẽ chiếm toàn bộ chiều rộng */
+            background-color: #2c3e50;
+            border-color: #5d9cec;
+        }
+
         .lesson-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -121,12 +128,23 @@
 <body>
 
     <header class="header">
-        <h1>Học Bảo Mật Web cơ bản với Demo</h1>
-        <p>Các bài học tương tác dựa trên danh sách <strong>OWASP Top 10 2021</strong>, được giải thích một
+        <h1>Học Bảo Mật Web qua Demo</h1>
+        <p>Danh sách các bài học tương tác dựa trên <strong>OWASP Top 10 2021</strong>, được giải thích một
             cách đơn giản và trực quan.</p>
     </header>
 
     <main class="lesson-grid">
+
+        <div class="lesson-card foundation-card">
+            <div class="card-header">
+                <h2>Bài học nền tảng: Các phương thức xác thực Web cơ bản</h2>
+                <span class="owasp-tag" style="background: #28a745;">BẮT ĐẦU TẠI ĐÂY</span>
+            </div>
+            <p>Trước khi tìm hiểu các lỗ hổng, hãy bắt đầu với bài học quan trọng nhất: cách các ứng dụng web xác minh
+                danh tính của bạn. Hiểu rõ điều này là chìa khóa để hiểu mọi thứ khác.</p>
+            <a href="./Authentication-Explained.html" target="_blank" rel="noopener noreferrer"
+                class="action-button">Xem bài học nền tảng</a>
+        </div>
 
         <div class="lesson-card">
             <div class="card-header">

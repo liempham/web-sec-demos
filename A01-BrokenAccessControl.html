@@ -95,6 +95,18 @@
             margin: 15px 0
         }
 
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffeeba;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            color: #856404;
+            font-size: 1em;
+            line-height: 1.5;
+            border-radius: 0 8px 8px 0;
+        }
+
         button {
             width: 100%;
             padding: 15px;
@@ -168,9 +180,16 @@
         <div class="container">
             <h1>Broken Access Control là gì?</h1>
             <p style="text-align:center;">Lỗi này xảy ra khi hệ thống không kiểm tra kỹ xem một người dùng có thực sự
-                được phép thực hiện một hành động hay không. Dạng phổ biến nhất là <strong>IDOR</strong>. Tưởng tượng
-                URL xem hóa đơn là `...?id=123`. Nếu bạn chỉ cần đổi thành `id=124` và xem được hóa đơn của người khác,
-                đó chính là IDOR.</p>
+                được phép thực hiện một hành động hay không. Dạng phổ biến nhất là <strong>Insecure Direct Object
+                    References - IDOR</strong>.
+                <br /> Tưởng tượng URL xem hóa đơn là <strong>`...?id=123`</strong>. Nếu bạn chỉ cần đổi thành
+                <strong>`id=124`</strong> và xem được hóa đơn của người khác,
+                đó chính là IDOR.
+            </p>
+            <div class="note">
+               Vì đây là lỗ hổng ở phía máy chủ (backend), nó ảnh hưởng đến
+                <strong>tất cả các loại client</strong>, bao gồm cả trình duyệt web và ứng dụng di động.
+            </div>
             <h2>Một số dạng Lỗi Kiểm soát Truy cập</h2>
             <ul>
                 <li><strong>IDOR:</strong> Thay đổi một tham số trong URL (như ID) để truy cập vào dữ liệu của người

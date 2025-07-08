@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học nền tảng: các phương thức xác thực Web phổ biến</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        h1 {
+            font-size: clamp(2.2em, 7vw, 3.2em);
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: clamp(1.8em, 6vw, 2.2em);
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: clamp(1.4em, 5vw, 1.6em);
+            color: #333;
+            text-align: left;
+            margin-top: 30px;
+            font-weight: 600;
+        }
+
+        p,
+        li {
+            font-size: clamp(1em, 4vw, 1.1em);
+            line-height: 1.7;
+            color: #555;
+            text-align: left;
+        }
+
+        ul {
+            padding-left: 25px;
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;
+            padding: 20px 0;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .owasp-links {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .owasp-links strong {
+            color: #c94a4a;
+        }
+
+        .owasp-links a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .owasp-links a:hover {
+            text-decoration: underline;
+        }
+
+        .best-practices-section {
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 5px solid #5d9cec;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffeeba;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            color: #856404;
+            font-size: 1em;
+            line-height: 1.5;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .pros-cons {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .pros,
+        .cons {
+            width: 50%;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .pros {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+        }
+
+        .cons {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+        }
+
+        .pros h4,
+        .cons h4 {
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+
+        .pros ul,
+        .cons ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section">
+        <div class="container">
+            <h1>Các phương thức xác thực Web phổ biến</h1>
+            <p style="text-align:center; font-size: 1.3em; color: #333;">Xác thực (Authentication) là quá trình một ứng
+                dụng xác minh bạn đúng là người mà bạn tuyên bố. Trong các hệ thống hiện đại, backend thường phải hỗ trợ
+                nhiều loại client (trình duyệt web, ứng dụng di động...), việc này ảnh hưởng lớn đến sự lựa chọn cơ chế
+                xác thực phù hợp.</p>
+
+            <!-- Method 1: Session/Cookie -->
+            <h2>1. Xác thực bằng Session/Cookie</h2>
+            <p>Đây là phương pháp truyền thống và phổ biến nhất cho các trang web nhiều trang. Sau khi người dùng đăng nhập
+                đúng, máy chủ sẽ tạo một "phiên làm việc" (session) và cấp cho trình duyệt một "vé vào cổng" gọi là
+                cookie. Trong các yêu cầu sau đó, trình duyệt sẽ tự động gửi kèm cookie này.</p>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>Ưu điểm</h4>
+                    <ul>
+                        <li>Đơn giản để triển khai trên các ứng dụng web truyền thống (stateful).</li>
+                        <li>Được trình duyệt hỗ trợ tự nhiên, không cần JavaScript để quản lý.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>Nhược điểm</h4>
+                    <ul>
+                        <li>Khó mở rộng (scaling) vì session phải được lưu trên server.</li>
+                        <li>Không thân thiện với mobile/SPA.</li>
+                        <li>Dễ bị tấn công CSRF.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant User as Người dùng; 
+                    participant Browser as Trình duyệt; 
+                    participant Server as Máy chủ;
+                    User->>Browser: Nhập Tên & Mật khẩu; 
+                    Browser->>Server: Gửi thông tin đăng nhập; 
+                    Server-->>Server: Kiểm tra CSDL, nếu đúng...<br />Tạo Session ID (ví dụ: "xyz123"); 
+                    Server-->>Browser: Gửi lại Session ID trong một Cookie; 
+                    Browser-->>User: Hiển thị trang "Đăng nhập thành công"; 
+                    Note over Browser, Server: Trong các yêu cầu tiếp theo...; 
+                    Browser->>Server: Yêu cầu trang cá nhân (kèm Cookie "xyz123"); 
+                    Server-->>Server: Kiểm tra Session ID "xyz123" hợp lệ; 
+                    Server-->>Browser: Trả về trang cá nhân
+                </div>
+            </div>
+            <div class="owasp-links">
+                <strong>Các rủi ro OWASP liên quan:</strong>
+                <ul>
+                    <li><a href="./A07-AuthenticationFailures.html" target="_blank">A07: Authentication Failures</a> -
+                        Nếu session token có thể đoán được.</li>
+                    <li><a href="./CSRF-Classic.html" target="_blank">CSRF</a> - Lợi dụng việc trình duyệt tự động gửi
+                        cookie.</li>
+                </ul>
+            </div>
+
+            <!-- Method 2: Token-Based (JWT) -->
+            <h2>2. Xác thực bằng Token (ví dụ: JWT)</h2>
+            <p>Phổ biến trong SPA và API. Máy chủ cấp cho client một "thẻ thông hành" có chữ ký số gọi là Token. Client
+                sẽ lưu token này và gửi nó trong mỗi yêu cầu đến API. Máy chủ chỉ cần kiểm tra chữ ký của token để xác
+                thực.</p>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>Ưu điểm</h4>
+                    <ul>
+                        <li>Stateless, không cần lưu session trên server, dễ mở rộng.</li>
+                        <li>Hoạt động tốt với web, mobile, và các hệ thống khác nhau.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>Nhược điểm</h4>
+                    <ul>
+                        <li>Khó thu hồi token trước khi hết hạn.</li>
+                        <li>Nếu lưu trong localStorage, dễ bị tấn công XSS.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant User as Người dùng; 
+                    participant ClientApp as Ứng dụng Client (Web/Mobile); 
+                    participant Server as Máy chủ API; 
+                    User->>ClientApp: Đăng nhập; 
+                    ClientApp->>Server: Gửi Tên & Mật khẩu;
+                    Server-->>Server: Xác thực, tạo ra một JWT có chữ ký; 
+                    Server-->>ClientApp: Trả về JWT;
+                    ClientApp-->>ClientApp: Lưu JWT; 
+                    Note over ClientApp, Server: Trong các yêu cầu API tiếp theo...;
+                    ClientApp->>Server: Gọi API (kèm JWT trong Header "Authorization"); 
+                    Server-->>Server: Kiểm tra chữ ký của JWT có hợp lệ không; 
+                    Server-->>ClientApp: Trả về dữ liệu API
+                </div>
+            </div>
+            <div class="owasp-links">
+                <strong>Các rủi ro OWASP liên quan:</strong>
+                <ul>
+                    <li><a href="./A02-CryptographicFailures.html" target="_blank">A02: Cryptographic Failures</a> - Nếu
+                        chữ ký của token yếu.</li>
+                    <li><a href="./A03-Injection-XSS.html" target="_blank">A03: Injection (XSS)</a> - Nếu token được lưu
+                        ở nơi mà XSS có thể lấy cắp (localStorage trên web).</li>
+                </ul>
+            </div>
+
+            <!-- Method 3: OAuth 2.0 -->
+            <h2>3. Xác thực liên kết (OAuth 2.0)</h2>
+            <p>Đây không phải là cơ chế xác thực, mà là cơ chế <strong>ủy quyền</strong>. Nó cho phép một ứng dụng (ví
+                dụ: `MyAwesomeWebApp`) có thể truy cập vào tài nguyên của bạn trên một ứng dụng khác (ví dụ: `Google Photos`) mà
+                không cần biết mật khẩu Google của bạn. Chức năng "Đăng nhập với Google" là một ứng dụng phổ
+                biến của OAuth 2.0.</p>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>Ưu điểm</h4>
+                    <ul>
+                        <li>Trải nghiệm người dùng tốt, không cần tạo tài khoản mới.</li>
+                        <li>Không cần lưu mật khẩu của người dùng.</li>
+                        <li>Tăng cường bảo mật bằng cách dựa vào các nhà cung cấp lớn.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>Nhược điểm</h4>
+                    <ul>
+                        <li>Luồng hoạt động phức tạp qua nhiều bước, dễ triển khai sai.</li>
+                        <li>Rủi ro tiềm ẩn khi phụ thuộc vào một bên thứ ba ngoài tầm kiểm soát.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant User as Người dùng; 
+                    participant ClientApp as Ứng dụng MyAwesomeWebApp; 
+                    participant AuthServer as Máy chủ Xác thực (Google); 
+                    User->>ClientApp: Yêu cầu "Đăng nhập với Google"; 
+                    ClientApp->>User: Chuyển hướng tới trang đăng nhập Google; 
+                    User->>AuthServer: Đăng nhập và đồng ý cấp quyền;
+                    AuthServer->>User: Chuyển hướng về Ứng dụng MyAwesomeWebApp (kèm mã tạm thời `code`); 
+                    User->>ClientApp: Gửi `code` cho Ứng dụng MyAwesomeWebApp; 
+                    ClientApp->>AuthServer: Gửi `code` + `client_secret`; 
+                    AuthServer-->>ClientApp: Trả về `Access Token`; 
+                    ClientApp->>AuthServer: Dùng `Access Token` để lấy thông tin người dùng;
+                    AuthServer-->>ClientApp: Trả về thông tin (tên, email...)
+                </div>
+            </div>
+            <div class="owasp-links">
+                <strong>Các rủi ro OWASP liên quan:</strong>
+                <ul>
+                    <li><a href="./A05-SecurityMisconfiguration.html" target="_blank">A05: Security Misconfiguration</a>
+                        - Nếu cấu hình sai Redirect URI.</li>
+                    <li><a href="./A07-AuthenticationFailures.html" target="_blank">A07: Authentication Failures</a> -
+                        Nếu `state` parameter không được kiểm tra.</li>
+                </ul>
+            </div>
+
+            <!-- Method 4: Passwordless / Passkeys -->
+            <h2>4. Xác thực không mật khẩu (Passwordless) với Passkeys</h2>
+            <p>Đây là tiêu chuẩn hiện đại nhất, thay thế hoàn toàn mật khẩu bằng một cặp khóa mã hóa (public/private
+                key). Private key được lưu trữ an toàn trên thiết bị của người dùng (điện thoại, laptop)
+                và không bao giờ rời khỏi đó. Việc xác thực diễn ra khi người dùng chứng minh họ sở hữu private key,
+                thường thông qua sinh trắc học (vân tay, khuôn mặt) hoặc mã PIN của thiết bị.</p>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>Ưu điểm</h4>
+                    <ul>
+                        <li>Bảo mật cao nhất, chống lừa đảo (phishing) hiệu quả.</li>
+                        <li>Trải nghiệm đăng nhập siêu nhanh và tiện lợi.</li>
+                        <li>Không có mật khẩu để bị rò rỉ.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>Nhược điểm</h4>
+                    <ul>
+                        <li>Còn khá mới, thiết bị hỗ trợ còn ít, người dùng chưa quen thuộc.</li>
+                        <li>Quy trình khôi phục tài khoản khi đổi hoặc mất thiết bị cần được thiết kế cẩn thận với Threat Modeling.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant User as Người dùng; 
+                    participant Device as Thiết bị (OS/Browser); 
+                    participant Server as Máy chủ;
+                    loop Đăng ký Passkey
+                    User->>Server: 1. Yêu cầu tạo Passkey; 
+                    Server-->>Device: 2. Gửi một "thử thách" (challenge);
+                    Device-->>User: 3. Yêu cầu xác thực sinh trắc học/PIN; 
+                    User-->>Device: 4. Xác thực thành công;
+                    Device-->>Device: 5. Tạo cặp khóa Public/Private; 
+                    Device-->>Server: 6. Gửi Public Key + challenge đã ký; 
+                    Server-->>Server: 7. Lưu Public Key cho User
+                    end
+                    loop Đăng nhập bằng Passkey
+                    User->>Server: 1. Yêu cầu đăng nhập; 
+                    Server-->>Device: 2. Gửi một "thử thách" mới; 
+                    Device-->>User: 3. Yêu cầu xác thực sinh trắc học/PIN; 
+                    User-->>Device: 4. Xác thực thành công; 
+                    Device-->>Device: 5. Ký thử thách bằng Private Key; 
+                    Device-->>Server: 6. Gửi challenge đã ký; 
+                    Server-->>Server: 7. Xác minh chữ ký bằng Public Key đã lưu; 
+                    Server-->>User: 8. Đăng nhập thành công
+                    end
+                </div>
+            </div>
+            <div class="owasp-links">
+                <strong>Các rủi ro OWASP liên quan:</strong>
+                <ul>
+                    <li><a href="./A04-InsecureDesign.html" target="_blank">A04: Insecure Design</a> - Nếu quy trình
+                        khôi phục tài khoản khi mất thiết bị không được thiết kế an toàn.</li>
+                    <li><a href="./A07-AuthenticationFailures.html" target="_blank">A07: Authentication Failures</a> -
+                        Nếu việc triển khai WebAuthn (tiêu chuẩn đằng sau Passkeys) có sai sót.</li>
+                </ul>
+            </div>
+
+            <!-- Method 5: MFA -->
+            <h2>5. Xác thực đa yếu tố (MFA / 2FA)</h2>
+            <p>Là một lớp bảo vệ bổ sung, yêu cầu người dùng cung cấp ít nhất hai bằng chứng xác thực khác nhau. Các yếu
+                tố thường là: thứ bạn <strong>biết</strong> (mật khẩu), thứ bạn <strong>có</strong> (điện thoại, token
+                key), hoặc thứ thuộc về <strong>bạn</strong> (vân tay, khuôn mặt). MFA không phải là một phương thức
+                đăng nhập độc lập, mà là một lớp được thêm vào các phương thức khác (như mật khẩu hoặc social login).
+            </p>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>Ưu điểm</h4>
+                    <ul>
+                        <li>Tăng cường bảo mật một cách đáng kể.</li>
+                        <li>Là lớp phòng thủ cực kỳ hiệu quả chống lại việc mật khẩu bị đánh cắp.</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>Nhược điểm</h4>
+                    <ul>
+                        <li>Thêm một bước vào quá trình đăng nhập, có thể làm giảm nhẹ trải nghiệm người dùng.</li>
+                        <li>Các phương pháp dựa trên SMS có thể bị tấn công SIM-swapping.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant User as Người dùng; participant Server as Máy chủ;
+                    User->>Server: 1. Gửi Tên & Mật khẩu (đúng)
+                    Server-->>User: 2. Yêu cầu yếu tố thứ hai<br />(ví dụ: Nhập mã từ ứng dụng Authenticator)
+                    User->>Server: 3. Gửi mã 6 chữ số
+                    Server-->>Server: 4. Kiểm tra mã có hợp lệ không
+                    Server-->>User: 5. Cấp quyền truy cập
+                </div>
+            </div>
+            <div class="owasp-links">
+                <strong>Các rủi ro OWASP liên quan:</strong>
+                <ul>
+                    <li><a href="./A07-AuthenticationFailures.html" target="_blank">A07: Authentication Failures</a> -
+                        Dù có MFA, hệ thống vẫn có thể bị tấn công nếu quy trình khôi phục tài khoản yếu, hoặc không
+                        giới hạn số lần thử mã MFA.</li>
+                    <li><a href="./A04-InsecureDesign.html" target="_blank">A04: Insecure Design</a> - Nếu việc thiết
+                        lập MFA không an toàn, hoặc người dùng có thể dễ dàng bị lừa để vô hiệu hóa nó.</li>
+                </ul>
+            </div>
+
+            <div class="best-practices-section">
+                <h2>Workflow và Best Practices cho một Hệ thống Xác thực Hiện đại</h2>
+                <p>Một hệ thống hiện đại không chỉ dựa vào một cơ chế duy nhất mà thường kết hợp nhiều lớp phòng thủ để
+                    đạt được sự cân bằng giữa bảo mật mạnh mẽ và trải nghiệm người dùng tốt. Dưới đây là các phương pháp tốt nhất để tham khảo.</p>
+
+                <h3>Lớp 1: Phòng thủ ở biên (Edge Protection)</h3>
+                <p>Đây là lớp phòng thủ đầu tiên, chặn các cuộc tấn công tự động và quy mô lớn trước khi chúng kịp chạm
+                    tới ứng dụng của bạn.</p>
+                <div class="mermaid-container">
+                    <div class="mermaid">
+                        graph TD
+                        subgraph "Internet"
+                        A[Người dùng hợp lệ]
+                        B(Kẻ tấn công)
+                        end
+                        A --> C{WAF / DDoS Protection};
+                        B -- Tấn công DDoS / Quét lỗ hổng --> C;
+                        C -- Chặn --> X[X];
+                        C -- Traffic hợp lệ --> D[Máy chủ Web];
+                        D --> E[Ứng dụng của bạn];
+                        classDef red fill:#c94a4a,stroke:#333,color:white;
+                        class B,X red;
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Tường lửa ứng dụng web (Web Application Firewall - WAF):</strong> Là một tấm khiên giúp
+                        lọc và chặn các yêu cầu độc hại dựa trên các mẫu tấn công đã biết (như SQL Injection, XSS) trước
+                        khi chúng đến được máy chủ của bạn.</li>
+                    <li><strong>Chống tấn công từ chối dịch vụ (DDoS Protection):</strong> Các dịch vụ này giúp hấp thụ
+                        và lọc các luồng traffic khổng lồ từ các cuộc tấn công DDoS, đảm bảo người dùng hợp lệ vẫn có
+                        thể truy cập ứng dụng.</li>
+                </ul>
+
+                <h3>Lớp 2: Chống Tấn công Tự động (Bot & Abuse Protection)</h3>
+                <p>Lớp này nhằm ngăn chặn các bot thực hiện các cuộc tấn công brute-force hoặc tạo tài khoản hàng loạt.
+                    Đây là một phần quan trọng trong việc chống lại <a href="./A07-AuthenticationFailures.html"
+                        target="_blank">A07: Authentication Failures</a>.</p>
+                <div class="mermaid-container">
+                    <div class="mermaid">
+                        graph TD
+                        A[User cố gắng đăng nhập] --> B{Mật khẩu đúng?};
+                        B -- Đúng --> C[Đăng nhập thành công];
+                        B -- Sai --> D[Tăng bộ đếm lỗi cho IP/User];
+                        D --> E{Bộ đếm > 5 lần?};
+                        E -- Chưa --> F[Thông báo lỗi chung chung];
+                        E -- Vượt ngưỡng --> G["Yêu cầu giải CAPTCHA<br />(hoặc tạm khóa tài khoản)"];
+                        G --> H{Giải CAPTCHA thành công?};
+                        H -- Có --> I[Reset bộ đếm & cho thử lại];
+                        H -- Không --> F;
+                        classDef red fill:#ffc107,stroke:#333,color:black;
+                        class G,I red;
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Giới hạn số lần thử (Rate Limiting) với cơ chế tăng dần:</strong> Thay vì khóa vĩnh
+                        viễn, hệ thống nên áp dụng cơ chế khóa tăng dần để cân bằng giữa bảo mật và UX. Ví dụ như khi
+                        đăng nhập Google:
+                        <ul>
+                            <li>Sai 1-4 lần: Cho phép thử lại ngay.</li>
+                            <li>Sai lần thứ 5: Khóa trong 1 phút.</li>
+                            <li>Sai lần thứ 6: Khóa trong 5 phút.</li>
+                            <li>Sai lần thứ 7: Khóa trong 30 phút.</li>
+                        </ul>
+                        Cơ chế này khiến các cuộc tấn công tự động trở nên cực kỳ tốn thời gian và không hiệu quả, trong
+                        khi người dùng thật sự quên mật khẩu không bị phạt quá nặng.
+                    </li>
+                    <li><strong>Sử dụng CAPTCHA:</strong> Sau một vài lần thử thất bại, yêu cầu người dùng chứng minh họ
+                        là người thật bằng cách giải một bài toán CAPTCHA (ví dụ: reCAPTCHA của Google).</li>
+                </ul>
+
+                <h3>Lớp 3: Quy trình xác thực cốt lõi và Giám sát</h3>
+                <p>Đây là luồng xử lý chính khi người dùng đăng nhập, duy trì phiên làm việc, và cách chúng ta giám sát
+                    các hoạt động đó.</p>
+                <div class="mermaid-container">
+                    <div class="mermaid">
+                        sequenceDiagram
+                        participant User as Người dùng; 
+                        participant Client as Ứng dụng Client; 
+                        participant Server as Máy chủ; 
+                        participant SIEM as Hệ thống Giám sát; 
+                        loop Đăng nhập & Làm mới phiên; 
+                        User->>Client: 1. Đăng nhập với Mật khẩu + Mã MFA; 
+                        Client->>Server: Gửi thông tin xác thực; 
+                        Server-->>Server: Ghi log sự kiện đăng nhập; 
+                        Server->>SIEM: Gửi log; 
+                        Server-->>Client: 2. Cấp Access Token (ngắn hạn, ~15p)<br />và Refresh Token (dài hạn, ~7 ngày); 
+                        Client-->>Client: 3. Lưu Access Token trong bộ nhớ<br />Lưu Refresh Token trong HttpOnly Cookie; 
+                        Note over SIEM: Phân tích log, nếu phát hiện<br />đăng nhập từ vị trí lạ -> Gửi cảnh báo!; 
+                        User->>Client: 4. Yêu cầu dữ liệu cần xác thực; 
+                        Client->>Server: Gọi API kèm Access Token; 
+                        Server-->>Client: 5. Trả về dữ liệu (khi Access Token hợp lệ); 
+                        end
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Ưu tiên triển khai Passkeys (WebAuthn):</strong> Đây là tiêu chuẩn vàng hiện nay, cung
+                        cấp khả năng chống lừa đảo mạnh mẽ nhất và trải nghiệm người dùng tốt nhất. Hãy coi đây là mục
+                        tiêu cuối cùng cho hệ thống xác thực của bạn.</li>
+                    <li><strong>Luôn cung cấp Xác thực đa yếu tố (MFA):</strong> Đối với những người dùng chưa sẵn sàng
+                        cho Passkeys, MFA là lớp bảo vệ bắt buộc. Ưu tiên các phương pháp an toàn như ứng dụng
+                        Authenticator (TOTP).</li>
+                    <li><strong>Chính sách mật khẩu mạnh mẽ (nếu vẫn sử dụng):</strong> Yêu cầu mật khẩu đủ độ phức tạp,
+                        kiểm tra mật khẩu với danh sách các mật khẩu đã bị rò rỉ.</li>
+                    <li><strong>Quản lý phiên làm việc an toàn:</strong> Sử dụng mẫu Access Token ngắn hạn và Refresh
+                        Token dài hạn. Vô hiệu hóa Refresh Token ở phía máy chủ khi người dùng đổi mật khẩu hoặc đăng
+                        xuất.</li>
+                    <li><strong>Ghi nhật ký và giám sát toàn diện (<a href="./A09-LoggingFailures.html"
+                                target="_blank">A09</a>):</strong> Ghi lại mọi sự kiện xác thực (thành công, thất bại,
+                        đổi mật khẩu, thay đổi MFA) với đầy đủ thông tin (IP, User-Agent, User ID, thời gian).</li>
+                    <li><strong>Thiết lập cảnh báo tự động (Alerting):</strong> Cấu hình hệ thống giám sát để gửi cảnh
+                        báo ngay lập tức cho đội ngũ bảo mật (và có thể cả người dùng) khi có các hoạt động đáng ngờ, ví
+                        dụ:
+                        <ul>
+                            <li>Một chuỗi đăng nhập thất bại liên tiếp từ một IP.</li>
+                            <li>Một lần đăng nhập thành công ngay sau một chuỗi thất bại.</li>
+                            <li>Đăng nhập từ một quốc gia hoặc thiết bị hoàn toàn mới.</li>
+                            <li>Yêu cầu đổi mật khẩu hoặc thay đổi thông tin MFA.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+
+</html>
