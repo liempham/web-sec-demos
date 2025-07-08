@@ -32,6 +32,16 @@
             margin: 0 auto;
         }
 
+        .section-title {
+            font-size: 2em;
+            color: #ccc;
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 15px;
+        }
+
         .lesson-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -48,13 +58,6 @@
             display: flex;
             flex-direction: column;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .lesson-card.foundation-card {
-            grid-column: 1 / -1;
-            /* Thẻ này sẽ chiếm toàn bộ chiều rộng */
-            background-color: #2c3e50;
-            border-color: #5d9cec;
         }
 
         .lesson-card:hover {
@@ -115,183 +118,285 @@
             background-color: #6c757d;
         }
 
-        .lesson-card a.action-button:hover {
+        .lesson-card a.action-button:hover,
+        .lesson-card a.conceptual-link:hover {
             background-color: #4a8cdb;
         }
 
-        .lesson-card a.conceptual-link:hover {
-            background-color: #5a6268;
+        /* Styles for special cards */
+        .special-card-blue {
+            background-color: #2c3e50;
+            border-color: #5d9cec;
+        }
+
+        .special-card-purple {
+            background-color: #3e2750;
+            border-color: #9c27b0;
+        }
+
+        .reference-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .reference-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .reference-section li {
+            background-color: #252525;
+            border-left: 4px solid #5d9cec;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .reference-section a {
+            color: #8ab4f8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .reference-section a:hover {
+            text-decoration: underline;
+        }
+
+        .reference-section p {
+            margin: 5px 0 0 0;
+            color: #bbb;
+            font-size: 1em;
         }
     </style>
 </head>
 
 <body>
-
     <header class="header">
         <h1>Học Bảo Mật Web qua Demo</h1>
         <p>Danh sách các bài học tương tác dựa trên <strong>OWASP Top 10 2021</strong>, được giải thích một
             cách đơn giản và trực quan.</p>
     </header>
-
-    <main class="lesson-grid">
-
-        <div class="lesson-card foundation-card">
-            <div class="card-header">
-                <h2>Bài học nền tảng: Các phương thức xác thực Web cơ bản</h2>
-                <span class="owasp-tag" style="background: #28a745;">BẮT ĐẦU TẠI ĐÂY</span>
+    <main>
+        <h2 class="section-title">Kiến thức Nền tảng & Quy trình</h2>
+        <div class="lesson-grid">
+            <div class="lesson-card special-card-blue">
+                <div class="card-header">
+                    <h2>Bài học nền tảng: Xác thực</h2>
+                    <span class="owasp-tag" style="background: #28a745; cursor: default;">BẮT ĐẦU</span>
+                </div>
+                <p>Trước khi tìm hiểu các lỗ hổng, hãy bắt đầu với bài học quan trọng nhất: cách các ứng dụng web xác
+                    minh danh tính người dùng. Hiểu rõ điều này là chìa khóa để hiểu mọi thứ khác.</p>
+                <a href="./Authentication-Explained.html" target="_blank" rel="noopener noreferrer"
+                    class="action-button">Xem bài học nền tảng</a>
             </div>
-            <p>Trước khi tìm hiểu các lỗ hổng, hãy bắt đầu với bài học quan trọng nhất: cách các ứng dụng web xác minh
-                danh tính của bạn. Hiểu rõ điều này là chìa khóa để hiểu mọi thứ khác.</p>
-            <a href="./Authentication-Explained.html" target="_blank" rel="noopener noreferrer"
-                class="action-button">Xem bài học nền tảng</a>
+            <div class="lesson-card special-card-purple">
+                <div class="card-header">
+                    <h2 style="color: #ce93d8;">Nâng cao: Công cụ & Quy trình</h2>
+                    <span class="owasp-tag" style="background: #9c27b0;">NÂNG CAO</span>
+                </div>
+                <p>Tìm hiểu về các công cụ và quy trình tự động (DevSecOps) để phát hiện và ngăn chặn lỗ hổng một cách
+                    liên tục.</p>
+                <a href="./Tools-And-Workflows.html" target="_blank" rel="noopener noreferrer" class="action-button"
+                    style="background-color: #9c27b0;">Xem Công cụ & Quy trình</a>
+            </div>
         </div>
 
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A01: Broken Access Control</h2>
-                <a href="https://owasp.org/Top10/A01_2021-Broken_Access_Control/" target="_blank"
-                    rel="noopener noreferrer" class="owasp-tag">A01:2021</a>
+        <h2 class="section-title">Tài liệu & Demo các Lỗi Bảo mật phổ biến</h2>
+        <div class="lesson-grid">
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A01: Broken Access Control</h2><a href="https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+                        target="_blank" rel="noopener noreferrer" class="owasp-tag">A01:2021</a>
+                </div>
+                <p>Lỗi cho phép người dùng truy cập vào các tài nguyên hoặc thực hiện các hành động mà họ không được
+                    phép. Ví dụ kinh điển là IDOR.</p>
+                <a href="./A01-BrokenAccessControl.html" target="_blank" rel="noopener noreferrer"
+                    class="action-button">Xem bài học & Demo</a>
             </div>
-            <p>Lỗi cho phép người dùng truy cập vào các tài nguyên hoặc thực hiện các hành động mà họ không được phép.
-                Ví dụ kinh điển là IDOR.</p>
-            <a href="./A01-BrokenAccessControl.html" target="_blank" rel="noopener noreferrer" class="action-button">Xem
-                bài học & Demo</a>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A02: Cryptographic Failures</h2><a
+                        href="https://owasp.org/Top10/A02_2021-Cryptographic_Failures/" target="_blank"
+                        rel="noopener noreferrer" class="owasp-tag">A02:2021</a>
+                </div>
+                <p>Các sai sót liên quan đến mã hóa (hoặc thiếu mã hóa), làm lộ dữ liệu nhạy cảm. Ví dụ: lưu mật khẩu
+                    dưới dạng văn bản thuần.</p>
+                <a href="./A02-CryptographicFailures.html" target="_blank" rel="noopener noreferrer"
+                    class="action-button">Xem bài học & Demo</a>
+            </div>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A03: Injection (SQLi)</h2><a href="https://owasp.org/Top10/A03_2021-Injection/" target="_blank"
+                        rel="noopener noreferrer" class="owasp-tag">A03:2021</a>
+                </div>
+                <p>Lỗ hổng cho phép kẻ tấn công chèn các câu lệnh SQL tùy ý vào truy vấn của ứng dụng, có thể dùng để
+                    xem, sửa, xóa dữ liệu.</p>
+                <a href="./A03-Injection-SQLi.html" target="_blank" rel="noopener noreferrer" class="action-button">Xem
+                    bài học & Demo</a>
+            </div>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A03: Injection (XSS)</h2><a href="https://owasp.org/Top10/A03_2021-Injection/" target="_blank"
+                        rel="noopener noreferrer" class="owasp-tag">A03:2021</a>
+                </div>
+                <p>Một dạng lỗi Injection đặc biệt, nơi kẻ tấn công chèn mã độc JavaScript vào trang web, và mã này sẽ
+                    được thực thi trên trình duyệt của người dùng khác.</p>
+                <a href="./A03-Injection-XSS.html" target="_blank" rel="noopener noreferrer" class="action-button">Xem
+                    bài học & Demo</a>
+            </div>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A04: Insecure Design</h2><a href="https://owasp.org/Top10/A04_2021-Insecure_Design/"
+                        target="_blank" rel="noopener noreferrer" class="owasp-tag">A04:2021</a>
+                </div>
+                <p>Các sai sót trong luồng logic và thiết kế của ứng dụng vốn đã không an toàn, dù cho quá trình triển
+                    khai có hoàn hảo đến đâu.</p>
+                <a href="./A04-InsecureDesign.html" target="_blank" rel="noopener noreferrer"
+                    class="action-button conceptual-link">Xem giải thích khái niệm</a>
+            </div>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A05: Security Misconfiguration</h2><a
+                        href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank"
+                        rel="noopener noreferrer" class="owasp-tag">A05:2021</a>
+                </div>
+                <p>Các lỗi cấu hình sai trên máy chủ, framework, hoặc ứng dụng, chẳng hạn như để lộ thông báo lỗi chi
+                    tiết hoặc giữ các tài khoản mặc định.</p>
+                <a href="./A05-SecurityMisconfiguration.html" target="_blank" rel="noopener noreferrer"
+                    class="action-button">Xem bài học & Demo</a>
+            </div>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A06: Vulnerable Components</h2><a
+                        href="https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/" target="_blank"
+                        rel="noopener noreferrer" class="owasp-tag">A06:2021</a>
+                </div>
+                <p>Sử dụng các thành phần, thư viện, hoặc framework của bên thứ ba đã lỗi thời hoặc có lỗ hổng bảo mật
+                    đã được công bố.</p>
+                <a href="./A06-VulnerableComponents.html" target="_blank" rel="noopener noreferrer"
+                    class="action-button">Xem bài học & Demo</a>
+            </div>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A07: Authentication Failures</h2><a
+                        href="https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/"
+                        target="_blank" rel="noopener noreferrer" class="owasp-tag">A07:2021</a>
+                </div>
+                <p>Các sai sót trong việc quản lý phiên đăng nhập và xác thực người dùng, cho phép kẻ tấn công mạo danh
+                    hoặc chiếm quyền điều khiển tài khoản người khác.</p>
+                <a href="./A07-AuthenticationFailures.html" target="_blank" rel="noopener noreferrer"
+                    class="action-button">Xem bài học & Demo</a>
+            </div>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A08: Integrity Failures</h2><a
+                        href="https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/" target="_blank"
+                        rel="noopener noreferrer" class="owasp-tag">A08:2021</a>
+                </div>
+                <p>Lỗi liên quan đến việc không kiểm tra tính toàn vẹn của dữ liệu và phần mềm, ví dụ như các lỗ hổng về
+                    giải tuần tự hóa không an toàn.</p>
+                <a href="./A08-IntegrityFailures.html" target="_blank" rel="noopener noreferrer"
+                    class="action-button conceptual-link">Xem giải thích khái niệm</a>
+            </div>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A09: Logging & Monitoring Failures</h2><a
+                        href="https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/"
+                        target="_blank" rel="noopener noreferrer" class="owasp-tag">A09:2021</a>
+                </div>
+                <p>Việc ghi nhật ký (log) và giám sát không đầy đủ khiến các cuộc tấn công không bị phát hiện, gây khó
+                    khăn cho việc điều tra và phản ứng sự cố.</p>
+                <a href="./A09-LoggingFailures.html" target="_blank" rel="noopener noreferrer"
+                    class="action-button conceptual-link">Xem giải thích khái niệm</a>
+            </div>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>A10: SSRF</h2><a href="https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_(SSRF)/"
+                        target="_blank" rel="noopener noreferrer" class="owasp-tag">A10:2021</a>
+                </div>
+                <p>Lỗ hổng cho phép kẻ tấn công buộc máy chủ của ứng dụng phải gửi đi một yêu cầu giả mạo đến một địa
+                    chỉ không mong muốn.</p>
+                <a href="./A10-SSRF.html" target="_blank" rel="noopener noreferrer" class="action-button">Xem bài học &
+                    Demo</a>
+            </div>
+            <div class="lesson-card">
+                <div class="card-header">
+                    <h2>CSRF (Classic)</h2><a
+                        href="https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html"
+                        target="_blank" rel="noopener noreferrer" class="owasp-tag">OWASP Classic</a>
+                </div>
+                <p>Tấn công buộc trình duyệt của nạn nhân (đã đăng nhập) gửi đi một yêu cầu giả mạo đến một trang web,
+                    thực hiện các hành động không mong muốn.</p>
+                <a href="./CSRF-Classic.html" target="_blank" rel="noopener noreferrer" class="action-button">Xem bài
+                    học & Demo</a>
+            </div>
         </div>
 
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A02: Cryptographic Failures</h2>
-                <a href="https://owasp.org/Top10/A02_2021-Cryptographic_Failures/" target="_blank"
-                    rel="noopener noreferrer" class="owasp-tag">A02:2021</a>
-            </div>
-            <p>Các sai sót liên quan đến mã hóa (hoặc thiếu mã hóa), làm lộ dữ liệu nhạy cảm. Ví dụ: lưu mật khẩu dưới
-                dạng văn bản thuần.</p>
-            <a href="./A02-CryptographicFailures.html" target="_blank" rel="noopener noreferrer"
-                class="action-button">Xem bài học & Demo</a>
+        <h2 class="section-title">Một số Tài liệu Tham khảo</h2>
+        <div class="reference-section">
+            <ul>
+                <li>
+                    <a href="https://owasp.org/Top10/" target="_blank" rel="noopener noreferrer">OWASP Top 10</a>
+                    <p>Nguồn tài liệu gốc và quan trọng nhất. Đây là danh sách tiêu chuẩn của ngành về 10 rủi ro bảo mật
+                        ứng dụng web nghiêm trọng nhất.</p>
+                </li>
+                <li>
+                    <a href="https://cheatsheetseries.owasp.org/" target="_blank" rel="noopener noreferrer">OWASP Cheat
+                        Sheet Series</a>
+                    <p>Bộ sưu tập các hướng dẫn chi tiết, súc tích về cách phòng chống từng loại lỗ hổng cụ thể. Cực kỳ
+                        hữu ích cho lập trình viên.</p>
+                </li>
+                <li>
+                    <a href="https://thehackernews.com/" target="_blank" rel="noopener noreferrer">The Hacker News</a>
+                    <p>Một trong những trang tin tức hàng đầu về an ninh mạng, giúp bạn cập nhật các cuộc tấn công, lỗ
+                        hổng zero-day và xu hướng mới nhất hàng ngày.</p>
+                </li>
+                <li>
+                    <a href="https://www.bleepingcomputer.com/" target="_blank" rel="noopener noreferrer">Bleeping
+                        Computer</a>
+                    <p>Trang tin tức tập trung vào các mối đe dọa thực tế như ransomware, lừa đảo và các vấn đề bảo mật
+                        ảnh hưởng đến người dùng cuối và doanh nghiệp.</p>
+                </li>
+                <li>
+                    <a href="https://portswigger.net/web-security" target="_blank" rel="noopener noreferrer">PortSwigger
+                        Web Security Academy</a>
+                    <p>Một nền tảng học tập trực tuyến miễn phí với hàng trăm bài lab thực hành từ cơ bản đến nâng cao,
+                        được tạo bởi những người làm ra Burp Suite.</p>
+                </li>
+                <li>
+                    <a href="https://cve.mitre.org/" target="_blank" rel="noopener noreferrer">CVE (Common
+                        Vulnerabilities and Exposures)</a>
+                    <p>Cơ sở dữ liệu chính thức về các lỗ hổng bảo mật đã được công bố. Nơi để tra cứu thông tin chi
+                        tiết về một lỗ hổng cụ thể trong các phần mềm.</p>
+                </li>
+                <li>
+                    <a href="https://hackerone.com/hacktivity" target="_blank" rel="noopener noreferrer">HackerOne
+                        Hacktivity</a>
+                    <p>Xem các báo cáo lỗ hổng thực tế đã được công khai từ các chương trình săn lỗi nhận thưởng (bug
+                        bounty). Một cách tuyệt vời để học hỏi từ các hacker mũ trắng.</p>
+                </li>
+                <li>
+                    <a href="https://snyk.io/vuln/" target="_blank" rel="noopener noreferrer">Snyk Vulnerability
+                        Database</a>
+                    <p>Cơ sở dữ liệu chuyên sâu về các lỗ hổng trong các thư viện mã nguồn mở, rất hữu ích cho việc thực
+                        hiện SCA.</p>
+                </li>
+                <li>
+                    <a href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">MITRE ATT&CK®
+                        Framework</a>
+                    <p>Một bộ kiến thức toàn cầu về các chiến thuật và kỹ thuật của kẻ tấn công dựa trên các quan sát
+                        trong thế giới thực. Hữu ích cho việc xây dựng các chiến lược phòng thủ chuyên sâu.</p>
+                </li>
+                <li>
+                    <a href="https://krebsonsecurity.com/" target="_blank" rel="noopener noreferrer">Krebs on
+                        Security</a>
+                    <p>Blog điều tra chuyên sâu về tội phạm mạng của nhà báo Brian Krebs. Cung cấp những câu chuyện và
+                        phân tích độc đáo.</p>
+                </li>
+            </ul>
         </div>
-
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A03: Injection (SQLi)</h2>
-                <a href="https://owasp.org/Top10/A03_2021-Injection/" target="_blank" rel="noopener noreferrer"
-                    class="owasp-tag">A03:2021</a>
-            </div>
-            <p>Lỗ hổng cho phép kẻ tấn công chèn các câu lệnh SQL tùy ý vào truy vấn của ứng dụng, có thể dùng để xem,
-                sửa, xóa dữ liệu.</p>
-            <a href="./A03-Injection-SQLi.html" target="_blank" rel="noopener noreferrer" class="action-button">Xem bài
-                học & Demo</a>
-        </div>
-
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A03: Injection (XSS)</h2>
-                <a href="https://owasp.org/Top10/A03_2021-Injection/" target="_blank" rel="noopener noreferrer"
-                    class="owasp-tag">A03:2021</a>
-            </div>
-            <p>Một dạng lỗi Injection đặc biệt, nơi kẻ tấn công chèn mã độc JavaScript vào trang web, và mã này sẽ được
-                thực thi trên trình duyệt của người dùng khác.</p>
-            <a href="./A03-Injection-XSS.html" target="_blank" rel="noopener noreferrer" class="action-button">Xem bài
-                học & Demo</a>
-        </div>
-
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A04: Insecure Design</h2>
-                <a href="https://owasp.org/Top10/A04_2021-Insecure_Design/" target="_blank" rel="noopener noreferrer"
-                    class="owasp-tag">A04:2021</a>
-            </div>
-            <p>Các sai sót trong luồng logic và thiết kế của ứng dụng vốn đã không an toàn, dù cho quá trình triển khai
-                có hoàn hảo đến đâu.</p>
-            <a href="./A04-InsecureDesign.html" target="_blank" rel="noopener noreferrer"
-                class="action-button conceptual-link">Xem giải thích khái niệm</a>
-        </div>
-
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A05: Security Misconfiguration</h2>
-                <a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank"
-                    rel="noopener noreferrer" class="owasp-tag">A05:2021</a>
-            </div>
-            <p>Các lỗi cấu hình sai trên máy chủ, framework, hoặc ứng dụng, chẳng hạn như để lộ thông báo lỗi chi tiết
-                hoặc giữ các tài khoản mặc định.</p>
-            <a href="./A05-SecurityMisconfiguration.html" target="_blank" rel="noopener noreferrer"
-                class="action-button">Xem bài học & Demo</a>
-        </div>
-
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A06: Vulnerable Components</h2>
-                <a href="https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/" target="_blank"
-                    rel="noopener noreferrer" class="owasp-tag">A06:2021</a>
-            </div>
-            <p>Sử dụng các thành phần, thư viện, hoặc framework của bên thứ ba đã lỗi thời hoặc có lỗ hổng bảo mật đã
-                được công bố.</p>
-            <a href="./A06-VulnerableComponents.html" target="_blank" rel="noopener noreferrer"
-                class="action-button">Xem bài học & Demo</a>
-        </div>
-
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A07: Authentication Failures</h2>
-                <a href="https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/" target="_blank"
-                    rel="noopener noreferrer" class="owasp-tag">A07:2021</a>
-            </div>
-            <p>Các sai sót trong việc quản lý phiên đăng nhập và xác thực người dùng, cho phép kẻ tấn công mạo danh hoặc
-                chiếm quyền điều khiển tài khoản người khác.</p>
-            <a href="./A07-AuthenticationFailures.html" target="_blank" rel="noopener noreferrer"
-                class="action-button">Xem bài học & Demo</a>
-        </div>
-
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A08: Integrity Failures</h2>
-                <a href="https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/" target="_blank"
-                    rel="noopener noreferrer" class="owasp-tag">A08:2021</a>
-            </div>
-            <p>Lỗi liên quan đến việc không kiểm tra tính toàn vẹn của dữ liệu và phần mềm, ví dụ như các lỗ hổng về
-                giải tuần tự hóa không an toàn.</p>
-            <a href="./A08-IntegrityFailures.html" target="_blank" rel="noopener noreferrer"
-                class="action-button conceptual-link">Xem giải thích khái niệm</a>
-        </div>
-
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A09: Logging & Monitoring Failures</h2>
-                <a href="https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/" target="_blank"
-                    rel="noopener noreferrer" class="owasp-tag">A09:2021</a>
-            </div>
-            <p>Việc ghi nhật ký (log) và giám sát không đầy đủ khiến các cuộc tấn công không bị phát hiện, gây khó khăn
-                cho việc điều tra và phản ứng sự cố.</p>
-            <a href="./A09-LoggingFailures.html" target="_blank" rel="noopener noreferrer"
-                class="action-button conceptual-link">Xem giải thích khái niệm</a>
-        </div>
-
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>A10: SSRF</h2>
-                <a href="https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_(SSRF)/" target="_blank"
-                    rel="noopener noreferrer" class="owasp-tag">A10:2021</a>
-            </div>
-            <p>Lỗ hổng cho phép kẻ tấn công buộc máy chủ của ứng dụng phải gửi đi một yêu cầu giả mạo đến một địa chỉ
-                không mong muốn.</p>
-            <a href="./A10-SSRF.html" target="_blank" rel="noopener noreferrer" class="action-button">Xem bài học &
-                Demo</a>
-        </div>
-
-        <div class="lesson-card">
-            <div class="card-header">
-                <h2>CSRF (Classic)</h2>
-                <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html"
-                    target="_blank" rel="noopener noreferrer" class="owasp-tag">OWASP Classic</a>
-            </div>
-            <p>Tấn công buộc trình duyệt của nạn nhân (đã đăng nhập) gửi đi một yêu cầu giả mạo đến một trang web, thực
-                hiện các hành động không mong muốn.</p>
-            <a href="./CSRF-Classic.html" target="_blank" rel="noopener noreferrer" class="action-button">Xem bài học &
-                Demo</a>
-        </div>
-
     </main>
-
 </body>
 
 </html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học: Công cụ và Quy trình Bảo mật</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px
+        }
+
+        h1 {
+            font-size: clamp(2.5em, 8vw, 4em);
+            margin-bottom: 20px;
+            color: #333
+        }
+
+        h2 {
+            font-size: clamp(1.8em, 6vw, 2.2em);
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            text-align: left;
+            font-weight: 600
+        }
+
+        h3 {
+            font-size: clamp(1.4em, 5vw, 1.6em);
+            color: #333;
+            text-align: left;
+            margin-top: 30px;
+            font-weight: 600
+        }
+
+        p,
+        li {
+            font-size: clamp(1em, 4vw, 1.1em);
+            line-height: 1.7;
+            color: #555;
+            text-align: left
+        }
+
+        ul {
+            padding-left: 25px
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;
+            padding: 20px;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .tool-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05)
+        }
+
+        .pros-cons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px
+        }
+
+        @media(min-width:600px) {
+            .pros-cons {
+                flex-direction: row
+            }
+        }
+
+        .pros,
+        .cons {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px
+        }
+
+        .pros {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745
+        }
+
+        .cons {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545
+        }
+
+        .pros h4,
+        .cons h4 {
+            margin-top: 0;
+            font-size: 1.2em
+        }
+
+        .pros ul,
+        .cons ul {
+            padding-left: 20px;
+            margin: 0
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            text-align: left
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            vertical-align: top
+        }
+
+        .comparison-table th {
+            background-color: #fafafa;
+            font-weight: 600
+        }
+
+        .comparison-table td ul {
+            margin: 0;
+            padding-left: 20px
+        }
+
+        .container ul li a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .note {
+            background-color: #e3f2fd;
+            border-left: 5px solid #4a90e2;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            color: #0c5460;
+            font-size: 1em;
+            line-height: 1.5;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section">
+        <div class="container">
+            <h1>Công cụ và Quy trình Bảo mật Hiện đại</h1>
+            <p style="text-align:center; font-size: 1.3em; color: #333;">Hiểu về lỗ hổng là bước đầu tiên. Bước tiếp
+                theo là sử dụng các công cụ và quy trình phù hợp để tự động phát hiện và ngăn chặn chúng. Bảo mật không
+                phải là một công việc làm một lần rồi thôi, mà là một <strong>quy trình liên tục</strong> để đối phó với
+                các mối đe dọa luôn thay đổi.</p>
+
+            <h2>1. Các Khái niệm Kiểm thử Bảo mật (AST)</h2>
+            <p>Trước khi đi vào các công cụ cụ thể, hãy tìm hiểu về các phương pháp kiểm thử bảo mật ứng dụng
+                (Application Security Testing - AST) cốt lõi.</p>
+
+            <h3>SAST (Static Application Security Testing)</h3>
+            <p><strong>Kiểm thử tĩnh:</strong> Phân tích mã nguồn của ứng dụng mà không cần chạy nó. Nó hoạt động giống
+                như một người soát lỗi, đọc từng dòng code để tìm ra các "mẫu code" nguy hiểm có thể dẫn đến lỗ hổng.
+            </p>
+
+            <h3>DAST (Dynamic Application Security Testing)</h3>
+            <p><strong>Kiểm thử động:</strong> Tương tác với ứng dụng đang chạy, giống như một hacker thực thụ. Nó gửi
+                đi các loại dữ liệu độc hại và phân tích phản hồi của ứng dụng để tìm ra các lỗ hổng mà chỉ có thể phát
+                hiện khi ứng dụng hoạt động.</p>
+
+            <h3>SCA (Software Composition Analysis)</h3>
+            <p><strong>Phân tích thành phần phần mềm:</strong> Không kiểm tra code của bạn, mà kiểm tra các "viên gạch"
+                bạn dùng để xây dựng ứng dụng - tức là các thư viện của bên thứ ba. Nó quét danh sách dependency của bạn
+                và đối chiếu với một cơ sở dữ liệu các lỗ hổng đã được công bố (CVEs). Vì các lỗ hổng mới trong thư viện
+                được phát hiện hàng ngày, việc quét SCA liên tục là cực kỳ quan trọng.</p>
+
+            <h3>Vulnerability Scanning (Quét lỗ hổng)</h3>
+            <p><strong>Quét toàn diện:</strong> Đây là một khái niệm rộng hơn, bao gồm việc quét toàn bộ hệ thống (máy
+                chủ, hệ điều hành, các dịch vụ mạng) để tìm các điểm yếu đã biết, các lỗi cấu hình sai, và các bản vá
+                còn thiếu. Nó không chỉ tập trung vào ứng dụng web mà còn cả hạ tầng bên dưới.</p>
+
+            <h3>So sánh các phương pháp</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Tiêu chí</th>
+                        <th>SAST</th>
+                        <th>DAST</th>
+                        <th>SCA</th>
+                        <th>Vulnerability Scanning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Mục tiêu</th>
+                        <td>Tìm lỗi trong code do bạn viết</td>
+                        <td>Tìm lỗi khi ứng dụng đang chạy</td>
+                        <td>Tìm lỗi trong thư viện bên thứ ba</td>
+                        <td>Tìm lỗi cấu hình và lỗ hổng đã biết trên hạ tầng</td>
+                    </tr>
+                    <tr>
+                        <th>Thời điểm áp dụng</th>
+                        <td>Rất sớm, ngay khi viết code (Shift Left)</td>
+                        <td>Giai đoạn kiểm thử và liên tục sau triển khai</td>
+                        <td>Sớm, trong quá trình phát triển & build</td>
+                        <td>Liên tục và định kỳ sau khi triển khai</td>
+                    </tr>
+                    <tr>
+                        <th>Ưu điểm</th>
+                        <td>
+                            <ul>
+                                <li>Phát hiện lỗi sớm</li>
+                                <li>Bao phủ 100% code</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Ít dương tính giả</li>
+                                <li>Phát hiện lỗi runtime</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Rất nhanh và chính xác</li>
+                                <li>Phát hiện lỗ hổng đã biết</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Bao phủ toàn diện hạ tầng</li>
+                                <li>Dễ tự động hóa định kỳ</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Nhược điểm</th>
+                        <td>
+                            <ul>
+                                <li>Nhiều dương tính giả</li>
+                                <li>Không hiểu ngữ cảnh lúc chạy</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Cần ứng dụng đang chạy</li>
+                                <li>Không bao phủ toàn bộ code</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Không tìm được lỗi trong code của bạn</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Không tìm được lỗi logic nghiệp vụ</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>2. Các công cụ Phổ biến theo từng Phương pháp</h2>
+            <div class="note">
+                <strong>Tiêu chí lựa chọn:</strong> Các công cụ được liệt kê dưới đây được chọn vì chúng là những đại
+                diện tiêu biểu, phổ biến và quan trọng nhất là <strong>mã nguồn mở</strong> hoặc có <strong>phiên bản
+                    miễn phí (free tier)</strong> mạnh mẽ. Điều này giúp các cá nhân và đội nhóm nhỏ có thể bắt đầu học
+                tập và áp dụng ngay lập tức. Bên cạnh đó, mỗi danh mục đều có rất nhiều giải pháp thương mại mạnh mẽ
+                khác dành cho doanh nghiệp lớn.
+            </div>
+
+            <div class="tool-card">
+                <h3>SAST: SonarQube / CodeQL / AWS CodeGuru Security</h3>
+                <p>Các công cụ này tích hợp trực tiếp vào quy trình phát triển của bạn. CodeQL (của GitHub) và CodeGuru
+                    Security (của AWS) sử dụng machine learning và các truy vấn ngữ nghĩa để tìm ra các lỗ hổng phức tạp
+                    với độ chính xác cao. Chúng là những ví dụ tiêu biểu bên cạnh các giải pháp thương mại khác như
+                    Veracode, Checkmarx.</p>
+            </div>
+            <div class="tool-card">
+                <h3>SCA: Snyk / GitHub Dependabot</h3>
+                <p>Các công cụ này tự động quét các file quản lý dependency (như `package.json`, `pom.xml`) và cảnh báo
+                    ngay lập tức khi một thư viện bạn đang dùng có lỗ hổng mới được phát hiện. Đây là những công cụ dẫn
+                    đầu thị trường, bên cạnh các lựa chọn khác như Black Duck.</p>
+            </div>
+            <div class="tool-card">
+                <h3>DAST & Kiểm thử thủ công: OWASP ZAP / Burp Suite</h3>
+                <p>Đây là các công cụ không thể thiếu của bất kỳ chuyên gia bảo mật nào, cho phép quét tự động các lỗi
+                    phổ biến và cung cấp một proxy mạnh mẽ để kiểm thử thủ công các luồng logic phức tạp. Các giải pháp
+                    thương mại trong lĩnh vực này có thể kể đến Acunetix hoặc Invicti.</p>
+            </div>
+            <div class="tool-card">
+                <h3>Vulnerability Scanning: Tenable Nessus Essentials</h3>
+                <p>Là một trong những trình quét lỗ hổng mạng phổ biến và mạnh mẽ nhất. Nó quét hệ thống để tìm các lỗi
+                    cấu hình, các bản vá còn thiếu, và hàng ngàn lỗ hổng đã biết khác. Các đối thủ cạnh tranh chính
+                    trong mảng này là Qualys và Rapid7.</p>
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Ưu điểm</h4>
+                        <ul>
+                            <li>Cơ sở dữ liệu lỗ hổng khổng lồ.</li>
+                            <li>Rất hiệu quả trong việc tìm lỗi cấu hình và thành phần lỗi thời ở cấp độ hạ tầng.</li>
+                            <li>Bản Essentials miễn phí cho tối đa 16 IP.</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Nhược điểm</h4>
+                        <ul>
+                            <li>Không chuyên sâu vào việc tìm lỗi logic của riêng ứng dụng web như ZAP/Burp.</li>
+                            <li>Bản trả phí có thể tốn kém.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="tool-card">
+                <h3>Giám sát An ninh (SIEM): Wazuh / ELK Stack</h3>
+                <p>Các công cụ này giúp thu thập, tổng hợp và phân tích log từ nhiều nguồn khác nhau (máy chủ, ứng dụng,
+                    tường lửa...). Chúng là trung tâm của hoạt động giám sát an ninh hàng ngày. Các giải pháp thương mại
+                    hàng đầu là Splunk và IBM QRadar.</p>
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Ưu điểm</h4>
+                        <ul>
+                            <li>Cung cấp cái nhìn toàn cảnh về an ninh hệ thống.</li>
+                            <li>Mạnh mẽ trong việc phát hiện các cuộc tấn công đang diễn ra.</li>
+                            <li>Wazuh và ELK đều là mã nguồn mở và rất mạnh mẽ.</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Nhược điểm</h4>
+                        <ul>
+                            <li>Cần nhiều tài nguyên để triển khai và vận hành.</li>
+                            <li>Đòi hỏi kiến thức chuyên môn để cấu hình các quy tắc cảnh báo hiệu quả.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h2>3. Quy trình DevSecOps để Bảo mật Liên tục</h2>
+            <p>DevSecOps là triết lý tích hợp bảo mật vào mọi giai đoạn của vòng đời phát triển phần mềm, thay vì chỉ
+                kiểm tra ở cuối quy trình. Mục tiêu là "Shift Left" - đưa bảo mật về phía bên trái, càng sớm càng tốt.
+            </p>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    graph TD
+                    subgraph "Giai đoạn Phát triển"
+                    A[1. Viết Code trên IDE] --> B[Plugin SAST/SCA<br />ví dụ: SonarLint, Snyk];
+                    end
+                    B --> C{2. Commit Code lên Git};
+                    C --> D[3. Kích hoạt CI Pipeline];
+                    subgraph "CI - Tích hợp Liên tục"
+                    D --> E[Build ứng dụng];
+                    E --> F[Chạy SAST<br />SonarQube, CodeQL, CodeGuru];
+                    E --> G[Chạy SCA<br />Snyk, Dependabot];
+                    end
+                    F --> H{Tìm thấy lỗi nghiêm trọng?};
+                    G --> H;
+                    H -- Có --> I[X - Dừng build & Báo lỗi];
+                    H -- Không --> J[4. Deploy lên môi trường Staging];
+                    J --> K[5. Chạy DAST<br />OWASP ZAP];
+                    K --> L{Tìm thấy lỗi nghiêm trọng?};
+                    L -- Có --> I;
+                    L -- Không --> M[6. Deploy lên Production];
+                    M --> N[7. Vận hành & Giám sát Liên tục<br />SIEM, Nessus];
+
+                    classDef dev fill:#d4edda,stroke:#155724;
+                    classDef ci fill:#e3f2fd,stroke:#4a90e2;
+                    classDef deploy fill:#fff3cd,stroke:#856404;
+                    classDef red fill:#f8d7da,stroke:#dc3545;
+                    class A,B,C dev;
+                    class D,E,F,G,H ci;
+                    class J,K,L,M,N deploy;
+                    class I red;
+                </div>
+            </div>
+
+            <h2>4. Vận hành & Giám sát An ninh Hàng ngày (Security Operations - SecOps)</h2>
+            <p>Sau khi ứng dụng đã được triển khai, công việc bảo mật không bao giờ dừng lại. Đội ngũ SecOps sẽ thực
+                hiện các hoạt động giám sát và phản ứng liên tục 24/7 để bảo vệ hệ thống khỏi các mối đe dọa trong thời
+                gian thực.</p>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    graph LR
+                    A[Giám sát Liên tục 24/7<br />SIEM] --> B{Phát hiện<br />Hành vi bất thường};
+                    B -- Cảnh báo --> C[Điều tra<br />Phân tích log];
+                    C --> D{Xác định<br />Sự cố Bảo mật?};
+                    D -- Có --> E[Phản ứng<br />Cô lập, Chặn IP];
+                    E --> F[Khắc phục<br />Vá lỗi, Cập nhật];
+                    F --> A;
+                    D -- Không --> G[Đóng cảnh báo<br />False Positive];
+                    G --> A;
+
+                    classDef red fill:#f8d7da,stroke:#dc3545;
+                    class B,C,D,E,F red;
+                </div>
+            </div>
+            <ul>
+                <li><strong>Giám sát và Cảnh báo (Monitoring & Alerting):</strong> Đây là trái tim của SecOps. Sử dụng
+                    các hệ thống <strong>SIEM (như Wazuh)</strong>, đội ngũ sẽ theo dõi log từ mọi nơi trong hệ thống.
+                    Các quy tắc được thiết lập sẵn để tự động phát hiện các dấu hiệu của một cuộc tấn công (ví dụ: nhiều
+                    lần đăng nhập thất bại, một yêu cầu quét lỗ hổng) và tạo ra cảnh báo ngay lập tức.</li>
+                <li><strong>Điều tra và Phân loại (Triage & Investigation):</strong> Khi một cảnh báo được tạo ra, các
+                    nhà phân tích bảo mật sẽ điều tra để xác định xem đó có phải là một cuộc tấn công thực sự hay chỉ là
+                    một cảnh báo giả (false positive). Họ sẽ phân tích sâu vào các log liên quan để hiểu rõ bản chất của
+                    sự việc.</li>
+                <li><strong>Phản ứng Sự cố (Incident Response):</strong> Nếu một cuộc tấn công được xác nhận, một quy
+                    trình phản ứng sự cố sẽ được kích hoạt. Các hành động tức thời có thể bao gồm: chặn địa chỉ IP của
+                    kẻ tấn công, cô lập máy chủ bị ảnh hưởng, vô hiệu hóa tài khoản bị chiếm quyền.</li>
+                <li><strong>Săn lùng Mối đe dọa (Threat Hunting):</strong> Thay vì chờ cảnh báo, các chuyên gia sẽ chủ
+                    động tìm kiếm các dấu hiệu của các mối đe dọa tiềm ẩn trong hệ thống mà các công cụ tự động có thể
+                    đã bỏ sót.</li>
+            </ul>
+
+            <h2>5. Best Practices để Xây dựng Quy trình Bảo mật Hiệu quả</h2>
+            <ul>
+                <li><strong>Bắt đầu từ Thiết kế (<a href="./A04-InsecureDesign.html" target="_blank">A04</a>):</strong>
+                    Luôn thực hiện "Threat Modeling" trước khi viết dòng code đầu tiên. Hãy tự hỏi: "Kẻ tấn công có thể
+                    lạm dụng tính năng này như thế nào?".</li>
+                <li><strong>Tự động hóa là chìa khóa:</strong> Tích hợp các công cụ SAST và SCA vào quy trình CI/CD của
+                    bạn. Bất kỳ mã nguồn mới nào cũng phải được quét tự động và có thể dừng build nếu phát hiện lỗi
+                    nghiêm trọng.</li>
+                <li><strong>Kết hợp nhiều lớp phòng thủ:</strong> Không có công cụ nào là hoàn hảo. Hãy kết hợp SAST
+                    (tìm lỗi trong code), SCA (tìm lỗi trong thư viện), DAST (tìm lỗi lúc chạy), và Vulnerability
+                    Scanning (quét hạ tầng) để có độ bao phủ tốt nhất.</li>
+                <li><strong>Đừng bỏ qua kiểm thử thủ công:</strong> Các công cụ tự động rất khó tìm ra các lỗi logic
+                    nghiệp vụ phức tạp (như <a href="./A01-BrokenAccessControl.html" target="_blank">A01: Broken Access
+                        Control</a>). Việc kiểm thử xâm nhập thủ công định kỳ bởi các chuyên gia vẫn rất cần thiết.</li>
+                <li><strong>Quản lý và Quét lỗ hổng liên tục:</strong> Thực hiện quét định kỳ toàn bộ hệ thống (bằng
+                    Nessus, ZAP...) ngay cả trên môi trường production để phát hiện các lỗ hổng mới hoặc các lỗi cấu
+                    hình phát sinh, đặc biệt là khi có các lỗ hổng zero-day mới được công bố trong các thành phần bạn
+                    đang sử dụng.</li>
+                <li><strong>Giám sát và Phản ứng 24/7 (<a href="./A09-LoggingFailures.html"
+                            target="_blank">A09</a>):</strong> Một hệ thống bảo mật tốt không chỉ ngăn chặn tấn công mà
+                    còn phải có khả năng phát hiện và cảnh báo khi một cuộc tấn công đang diễn ra. Triển khai một hệ
+                    thống SIEM (như Wazuh) để tập trung hóa log và thiết lập các cảnh báo tự động cho các hành vi đáng
+                    ngờ là cực kỳ quan trọng.</li>
+            </ul>
+        </div>
+    </div>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+
+</html>
