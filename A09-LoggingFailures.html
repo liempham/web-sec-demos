@@ -2,6 +2,8 @@
 <html lang="vi">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bài học về Logging Failures</title>
     <style>
         html,
@@ -11,7 +13,7 @@
             background-color: #f0f2f5;
             color: #333;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            scroll-behavior: smooth
+            scroll-behavior: smooth;
         }
 
         .section {
@@ -22,42 +24,49 @@
             text-align: center;
             padding: 40px 20px;
             box-sizing: border-box;
-            min-height: 90vh
+            min-height: 90vh;
         }
 
         .container {
             width: 100%;
-            max-width: 900px
+            max-width: 900px;
         }
 
         h1 {
             font-size: clamp(2.5em, 8vw, 4em);
             margin-bottom: 20px;
-            color: #333
+            color: #333;
         }
 
         h2 {
+            font-size: clamp(1.8em, 6vw, 2.2em);
             color: #333;
             border-bottom: 2px solid #ddd;
             padding-bottom: 10px;
-            margin-top: 40px
+            margin-top: 40px;
+            text-align: left;
+            font-weight: 600;
         }
 
         p,
         li {
             font-size: clamp(1em, 4vw, 1.2em);
-            line-height: 1.6;
+            line-height: 1.7;
             color: #555;
-            text-align: left
+            text-align: left;
         }
 
         ul {
-            padding-left: 25px
+            padding-left: 25px;
         }
 
         .mermaid-container {
             width: 100%;
-            margin-top: 30px
+            margin-top: 30px;
+            padding: 20px 0;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -100,23 +109,26 @@
             </ul>
             <div class="mermaid-container">
                 <div class="mermaid">
-                    sequenceDiagram 
-                    participant Attacker as Kẻ tấn công; 
-                    participant WebApp as Ứng dụng Web; 
-                    participant SystemLog as Nhật ký Hệ thống; 
-                    Attacker->>WebApp: Thử nhiều mật khẩu (Brute-force);
-                    WebApp-->>WebApp: LỖI: Không ghi log các lần đăng nhập thất bại; 
-                    Attacker->>WebApp: Tìm ra mật khẩu và Đăng nhập thành công!; 
-                    WebApp-->>WebApp: LỖI: Log đăng nhập thành công<br />không ghi rõ địa chỉ IP; 
-                    Attacker->>WebApp: Đánh cắp dữ liệu; 
-                    WebApp-->>WebApp: LỖI: Không có cảnh báo cho<br />hoạt động bất thường; 
-                    Note over SystemLog: Nhật ký hệ thống trống rỗng<br />hoặc thiếu thông tin trầm trọng.
-                    Note over Attacker, WebApp: Quản trị viên không hề hay biết<br />cuộc tấn công đang diễn ra.
+                    sequenceDiagram
+                    participant Attacker as KeTanCong
+                    participant WebApp as UngDungWeb
+                    participant SystemLog as NhatKyHeThong
+                    Attacker->>WebApp: Thu nhieu mat khau (Brute-force)
+                    WebApp-->>WebApp: LOI: Khong ghi log cac lan dang nhap that bai
+                    Attacker->>WebApp: Tim ra mat khau va Dang nhap thanh cong!
+                    WebApp-->>WebApp: LOI: Log dang nhap thanh cong<br />khong ghi ro dia chi IP
+                    Attacker->>WebApp: Danh cap du lieu
+                    WebApp-->>WebApp: LOI: Khong co canh bao cho<br />hoat dong bat thuong
+                    Note over SystemLog: Nhat ky he thong trong rong<br />hoac thieu thong tin tram trong.
+                    Note over Attacker, WebApp: Quan tri vien khong he hay biet<br />cuoc tan cong dang dien ra.
+                </div>
             </div>
         </div>
     </div>
-    <script
-        type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs'; mermaid.initialize({ startOnLoad: true, theme: 'base' });</script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
 </body>
 
 </html>

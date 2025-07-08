@@ -1,7 +1,8 @@
-<!DOCTYPE html>
 <html lang="vi">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bài học về Integrity Failures</title>
     <style>
         html,
@@ -11,7 +12,7 @@
             background-color: #f0f2f5;
             color: #333;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            scroll-behavior: smooth
+            scroll-behavior: smooth;
         }
 
         .section {
@@ -22,42 +23,49 @@
             text-align: center;
             padding: 40px 20px;
             box-sizing: border-box;
-            min-height: 90vh
+            min-height: 90vh;
         }
 
         .container {
             width: 100%;
-            max-width: 900px
+            max-width: 900px;
         }
 
         h1 {
             font-size: clamp(2.5em, 8vw, 4em);
             margin-bottom: 20px;
-            color: #333
+            color: #333;
         }
 
         h2 {
+            font-size: clamp(1.8em, 6vw, 2.2em);
             color: #333;
             border-bottom: 2px solid #ddd;
             padding-bottom: 10px;
-            margin-top: 40px
+            margin-top: 40px;
+            text-align: left;
+            font-weight: 600;
         }
 
         p,
         li {
             font-size: clamp(1em, 4vw, 1.2em);
-            line-height: 1.6;
+            line-height: 1.7;
             color: #555;
-            text-align: left
+            text-align: left;
         }
 
         ul {
-            padding-left: 25px
+            padding-left: 25px;
         }
 
         .mermaid-container {
             width: 100%;
-            margin-top: 30px
+            margin-top: 30px;
+            padding: 20px 0;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -96,21 +104,23 @@
             </ul>
             <div class="mermaid-container">
                 <div class="mermaid">
-                    sequenceDiagram 
-                    participant Attacker as Kẻ tấn công;
-                    participant WebApp as Ứng dụng Web; 
-                    Note over Attacker, WebApp: Kẻ tấn công tạo một đối tượng độc hại<br />và tuần tự hóa nó thành một chuỗi. 
-                    Attacker->>WebApp: 1. Gửi chuỗi dữ liệu độc hại (ví dụ: qua cookie) 
-                    Note right of WebApp: Ứng dụng nhận chuỗi và giải tuần tự hóa<br />nó một cách mù quáng. 
-                    WebApp-->>WebApp: 2. LỖI: new MaliciousObject() được tạo ra! 
-                    Note right of WebApp: Đối tượng độc hại thực thi mã lệnh<br />ngay khi được khởi tạo. 
-                    WebApp-->>Attacker: 3. Máy chủ bị chiếm quyền / Dữ liệu bị rò rỉ. 
+                    sequenceDiagram
+                    participant Attacker as KeTanCong
+                    participant WebApp as UngDungWeb
+                    Note over Attacker, WebApp: Ke tan cong tao mot doi tuong doc hai<br />va tuan tu hoa no thanh mot chuoi.
+                    Attacker->>WebApp: 1. Gui chuoi du lieu doc hai vi du: qua cookie
+                    Note right of WebApp: Ung dung nhan chuoi va giai tuan tu hoa<br />no mot cach mu quang.
+                    WebApp-->>WebApp: 2. LOI: new MaliciousObject() duoc tao ra!
+                    Note right of WebApp: Doi tuong doc hai thuc thi ma lenh<br />ngay khi duoc khoi tao.
+                    WebApp-->>Attacker: 3. May chu bi chiem quyen / Du lieu bi ro ri.
                 </div>
             </div>
         </div>
     </div>
-    <script
-        type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs'; mermaid.initialize({ startOnLoad: true, theme: 'base' });</script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
 </body>
 
 </html>

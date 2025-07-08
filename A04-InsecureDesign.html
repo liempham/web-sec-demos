@@ -2,6 +2,8 @@
 <html lang="vi">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bài học về Insecure Design</title>
     <style>
         html,
@@ -11,7 +13,7 @@
             background-color: #f0f2f5;
             color: #333;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            scroll-behavior: smooth
+            scroll-behavior: smooth;
         }
 
         .section {
@@ -22,42 +24,49 @@
             text-align: center;
             padding: 40px 20px;
             box-sizing: border-box;
-            min-height: 90vh
+            min-height: 90vh;
         }
 
         .container {
             width: 100%;
-            max-width: 900px
+            max-width: 900px;
         }
 
         h1 {
             font-size: clamp(2.5em, 8vw, 4em);
             margin-bottom: 20px;
-            color: #333
+            color: #333;
         }
 
         h2 {
+            font-size: clamp(1.8em, 6vw, 2.2em);
             color: #333;
             border-bottom: 2px solid #ddd;
             padding-bottom: 10px;
-            margin-top: 40px
+            margin-top: 40px;
+            text-align: left;
+            font-weight: 600;
         }
 
         p,
         li {
-            font-size: clamp(1em, 4vw, 1.2em);
-            line-height: 1.6;
+            font-size: clamp(1em, 4vw, 1.1em);
+            line-height: 1.7;
             color: #555;
-            text-align: left
+            text-align: left;
         }
 
         ul {
-            padding-left: 25px
+            padding-left: 25px;
         }
 
         .mermaid-container {
             width: 100%;
-            margin-top: 30px
+            margin-top: 30px;
+            padding: 20px 0;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -98,26 +107,30 @@
             <div class="mermaid-container">
                 <div class="mermaid">
                     graph TD;
-                    A[Yêu cầu tính năng mới] --> B{Giai đoạn Thiết kế};
-                    B --> C{Thiếu Threat Modeling};
-                    B --> D[Thiết kế an toàn];
-                    C --> E[Luồng logic có lỗ hổng];
-                    D --> F[Luồng logic chặt chẽ];
-                    E --> G[Lập trình viên triển khai<br />code hoàn hảo];
+                    A[Yeu cau tinh nang moi] --> B{Giai doan Thiet ke};
+                    B --> C{Thieu Threat Modeling};
+                    B --> D[Thiet ke an toan];
+                    C --> E[Luong logic co lo hong];
+                    D --> F[Luong logic chat che];
+                    E --> G[Lap trinh vien trien khai<br />code hoan hao];
                     F --> G;
-                    G --> H((Ứng dụng));
-                    I(Kẻ tấn công) --> H;
-                    subgraph "Kết quả" direction LR
-                    E -- Gây ra --> J(Ứng dụng vẫn có lỗ hổng<br />dù code đúng);
-                    F -- Giảm thiểu --> K(Ứng dụng an toàn hơn);
-                classDef red fill:#c94a4a,stroke:#333,color:white; 
-                class C,E,J,I red;
+                    G --> H((Ung dung));
+                    I(Ke tan cong) --> H;
+                    subgraph "Ket qua"
+                    direction LR
+                    E -- Gay ra --> J(Ung dung van co lo hong<br />du code dung);
+                    F -- Giam thieu --> K(Ung dung an toan hon);
+                    end
+                    classDef red fill:#c94a4a,stroke:#333,color:white;
+                    class C,E,J,I red;
                 </div>
             </div>
         </div>
     </div>
-    <script
-        type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs'; mermaid.initialize({ startOnLoad: true, theme: 'base' });</script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
 </body>
 
 </html>
