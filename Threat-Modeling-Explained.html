@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học nền tảng: Mô hình hóa Mối đe dọa</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        h1 {
+            font-size: clamp(2.2em, 7vw, 3.2em);
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: clamp(1.8em, 6vw, 2.2em);
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: clamp(1.4em, 5vw, 1.6em);
+            color: #333;
+            text-align: left;
+            margin-top: 30px;
+            font-weight: 600;
+        }
+
+        p,
+        li {
+            font-size: clamp(1em, 4vw, 1.1em);
+            line-height: 1.7;
+            color: #555;
+            text-align: left;
+        }
+
+        ul {
+            padding-left: 25px;
+        }
+
+        .mermaid-container {
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;
+            padding: 20px;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .note {
+            background-color: #e3f2fd;
+            border-left: 5px solid #4a90e2;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            color: #0c5460;
+            font-size: 1em;
+            line-height: 1.5;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .threat-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .threat-table th,
+        .threat-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            vertical-align: top;
+        }
+
+        .threat-table th {
+            background-color: #fafafa;
+            font-weight: 600;
+        }
+
+        .threat-table .threat-type {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .threat-table a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .threat-table a:hover {
+            text-decoration: underline;
+        }
+
+        .attack-scenario {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            color: #721c24;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section">
+        <div class="container">
+            <h1>Nền tảng: Mô hình hóa Mối đe dọa (Threat Modeling)</h1>
+            <p style="text-align:center; font-size: 1.3em; color: #333;">Threat Modeling là một quy trình có cấu trúc để
+                xác định các mối đe dọa bảo mật, định lượng mức độ nghiêm trọng của chúng, và ưu tiên các biện pháp khắc
+                phục. Thay vì chờ đợi các cuộc tấn công xảy ra, chúng ta chủ động suy nghĩ như một kẻ tấn công để tìm ra
+                các điểm yếu ngay từ giai đoạn thiết kế.</p>
+
+            <h2>1. Tại sao Threat Modeling lại quan trọng?</h2>
+            <p>Khái niệm về Threat Modeling đã có từ những ngày đầu của ngành công nghệ thông tin, nhưng nó thực sự được
+                hệ thống hóa và phổ biến rộng rãi bởi Microsoft vào cuối những năm 1990 và đầu 2000. Quy trình này giúp
+                chúng ta trả lời bốn câu hỏi cốt lõi:</p>
+            <ol>
+                <li><strong>What are we working on?</strong> (Chúng ta đang xây dựng cái gì?)</li>
+                <li><strong>What can go wrong?</strong> (Điều gì có thể đi sai hướng?)</li>
+                <li><strong>What are we going to do about it?</strong> (Chúng ta sẽ làm gì để khắc phục?)</li>
+                <li><strong>Did we do a good job?</strong> (Chúng ta đã làm tốt chưa?)</li>
+            </ol>
+            <p>Bằng cách trả lời những câu hỏi này một cách có hệ thống, chúng ta chuyển từ việc "phản ứng" với các lỗ
+                hổng sang "chủ động" ngăn chặn chúng, giúp tiết kiệm chi phí và giảm thiểu rủi ro một cách đáng kể. Đây
+                chính là triết lý cốt lõi của "Security by Design" và <a href="./A04-InsecureDesign.html"
+                    target="_blank">A04: Insecure Design</a>.</p>
+
+            <h2>2. Các Framework Phân tích Mối đe dọa tiềm ẩn</h2>
+            <p>Để trả lời câu hỏi "<strong>What can go wrong?</strong>" một cách có hệ thống, các chuyên gia đã tạo ra
+                nhiều
+                framework phân tích. STRIDE là framework phổ biến và dễ tiếp cận nhất để tìm kiếm mối đe
+                dọa.</p>
+
+            <h3>STRIDE: Phương pháp phổ biến để tìm kiếm mối đe dọa</h3>
+            <p>Được phát triển bởi Loren Kohnfelder và Praerit Garg tại Microsoft vào năm 1999, STRIDE là một từ viết
+                tắt giúp chúng ta ghi nhớ 6 hạng mục tấn công chính. Khi phân tích một tính năng, chúng ta sẽ lần lượt
+                xem xét nó có thể bị tấn công theo từng hạng mục này hay không.</p>
+            <table class="threat-table">
+                <thead>
+                    <tr>
+                        <th>Hạng mục</th>
+                        <th>Ý nghĩa</th>
+                        <th>Ví dụ dễ hiểu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>S</strong>poofing</td>
+                        <td><strong>Giả mạo danh tính</strong></td>
+                        <td>Dùng AI tạo video, hình ảnh của người khác để qua mặt Face ID hoặc xác thực khuôn mặt.
+                            <br />
+                            Kỹ thuật rất phổ biến & hiệu quả là "social engineering" - gọi điện thoại, gởi email giả
+                            dạng tình huống "rất khẩn cấp" để đe dọa, tạo áp lực cho mục tiêu.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>T</strong>ampering</td>
+                        <td><strong>Can thiệp, sửa đổi dữ liệu</strong></td>
+                        <td>Thay đổi nội dung của một lá thư đã được niêm phong trước khi nó đến tay người nhận.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>R</strong>epudiation</td>
+                        <td><strong>Chối bỏ hành động đã thực hiện</strong></td>
+                        <td>Nhận hàng rồi sau đó tuyên bố rằng mình chưa nhận để không phải trả
+                            tiền.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>I</strong>nformation Disclosure</td>
+                        <td><strong>Làm lộ thông tin nhạy cảm</strong></td>
+                        <td>Chụp hình, quay video có thông tin nhạy cảm (vd trên bàn hoặc màn hình máy tính) rồi "vô tư"
+                            đăng lên mạng.
+                            <br />
+                            Để tài liệu nhạy cảm ở chế độ public hoặc share tùy tiện với người không có trách nhiệm.
+                            <br />
+                            Hoặc đăng nhập vào tài khoản ở thiết bị không an toàn như máy của bạn.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>D</strong>enial of Service</td>
+                        <td><strong>Từ chối dịch vụ</strong></td>
+                        <td>Tạo một hàng dài người giả ở quầy thanh toán để không một khách hàng thật sự nào có thể mua
+                            hàng.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>E</strong>levation of Privilege</td>
+                        <td><strong>Leo thang đặc quyền</strong></td>
+                        <td>Một nhân viên bình thường tìm được chìa khóa phòng của giám đốc và tự cho mình các quyền hạn
+                            cao hơn.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Xếp hạng Rủi ro: DREAD vs. CVSS</h3>
+            <p>Sau khi tìm ra một danh sách các mối đe dọa, chúng ta cần một cách để xếp hạng chúng. Hai phương pháp phổ
+                biến là DREAD và CVSS.</p>
+            <ul>
+                <li><strong>DREAD:</strong> Được phát triển tại Microsoft vào khoảng năm 2002, DREAD dùng để <strong>xếp
+                        hạng rủi ro nhanh</strong> trong một buổi threat modeling, dựa trên các yếu tố: Mức độ thiệt hại
+                    (Damage), Khả năng tái hiện (Reproducibility), Khả năng khai thác (Exploitability), Số người dùng bị
+                    ảnh hưởng (Affected users), và Khả năng phát hiện (Discoverability). Nó mang tính chủ quan nhưng rất
+                    hữu ích để ưu tiên công việc ngay lập tức.</li>
+                <li><strong>CVSS (Common Vulnerability Scoring System):</strong> Là một <strong>tiêu chuẩn công nghiệp
+                        mở</strong>, được quản lý bởi FIRST.org từ năm 2005. Nó cung cấp một thang điểm khách quan (từ
+                    0.0 đến 10.0) dựa trên các yếu tố như vector tấn công, độ phức tạp, tác động đến tính bảo mật...
+                </li>
+            </ul>
+            <div class="note"><strong>Best Practice:</strong> Trong một buổi threat modeling, hãy
+                dùng <strong>STRIDE</strong> để tìm mối đe dọa, sau đó dùng <strong>DREAD</strong> để nhanh chóng phân
+                loại "cao/trung bình/thấp". Khi một lỗ hổng đã được xác nhận và cần báo cáo chính thức, hãy sử dụng
+                <strong>CVSS</strong> để cung cấp một điểm số chuẩn hóa, được công nhận rộng rãi.
+            </div>
+
+            <h2>3. Ví dụ thực tế: Mô hình hóa Mối đe dọa cho tính năng "Khôi phục Mật khẩu"</h2>
+            <p>Bây giờ, hãy áp dụng quy trình và framework ở trên vào một tính năng cực kỳ nhạy cảm: cho phép người dùng
+                khôi phục lại mật khẩu đã quên, sử dụng phương thức gửi mã OTP qua SMS và xác thực thông tin cá nhân.
+            </p>
+
+            <h3>Bước 1: Phân rã Hệ thống (Vẽ Sơ đồ Luồng tương tác)</h3>
+            <p>Mục tiêu của bước này là trực quan hóa hệ thống để mọi người cùng hiểu. Một <strong>Sơ đồ Luồng Dữ liệu
+                    (Data Flow Diagram - DFD)</strong> rất hữu ích để thấy các thành phần chính và các "Trust Boundary"
+                (Ranh giới Tin cậy). Sau đó, đối với các quy trình có nhiều bước tương tác theo thời gian, chúng ta có
+                thể dùng <strong>Sơ đồ Tuần tự (Sequence Diagram)</strong> để thấy rõ hơn sự qua lại của các yêu cầu và
+                phản hồi.</p>
+            <h4>Sơ đồ Luồng Dữ liệu (DFD)</h4>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    graph TD
+                    subgraph "Internet (Untrusted)"
+                    A(User/Attacker)
+                    end
+                    subgraph "Our Infrastructure (Trusted)"
+                    B[Web Server]
+                    C[(Database)]
+                    D[SMS Gateway]
+                    end
+                    E(Victim's Phone)
+
+                    A -- HTTP Request --> B;
+                    B <--> C;
+                        B --> D;
+                        D --> E;
+                </div>
+            </div>
+            <h4>Sơ đồ Tuần tự (Sequence Diagram)</h4>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant User as Người dùng/Kẻ tấn công
+                    participant WebServer as Máy chủ Web
+                    participant SMSGateway as Cổng SMS
+                    participant Database as Cơ sở dữ liệu
+
+                    User->>WebServer: 1. Yêu cầu reset cho SĐT
+                    WebServer->>Database: 2. Tạo OTP, hash & lưu
+                    WebServer->>SMSGateway: 3. Gửi OTP
+                    SMSGateway-->>User: 4. Gửi SMS chứa OTP
+                    User->>WebServer: 5. Nhập OTP
+                    WebServer->>Database: 6. Xác thực OTP
+                    Database-->>WebServer: OTP hợp lệ
+                    WebServer-->>User: 7. Yêu cầu nhập Tên & Ngày sinh
+                    User->>WebServer: 8. Nhập thông tin cá nhân
+                    WebServer->>Database: 9. Xác thực thông tin
+                    Database-->>WebServer: Thông tin hợp lệ
+                    WebServer-->>User: 10. Hiển thị trang đặt mật khẩu mới
+                </div>
+            </div>
+            <ul>
+                <li><strong>Entry Points (Điểm vào):</strong> Là nơi người dùng/kẻ tấn công có thể gửi dữ liệu vào hệ
+                    thống. Ở đây là `Web Server` (qua các request HTTP).</li>
+                <li><strong>Assets (Tài sản):</strong> Là những thứ chúng ta cần bảo vệ. Ở đây là `Database` (chứa thông
+                    tin người dùng, hash của OTP) và quyền truy cập vào tài khoản của người dùng.</li>
+                <li><strong>External Dependencies (Phụ thuộc bên ngoài):</strong> Là các hệ thống chúng ta tương tác
+                    nhưng không kiểm soát hoàn toàn, như `SMS Gateway` và mạng viễn thông.</li>
+            </ul>
+
+            <h3>Bước 2 & 3: Phân tích từng bước và Xác định Mối đe dọa (Sử dụng STRIDE)</h3>
+            <p>Bây giờ, chúng ta sẽ đi qua từng bước trong sơ đồ và đặt câu hỏi "Điều gì có thể đi sai hướng?" bằng cách
+                sử dụng framework STRIDE.</p>
+
+            <div class="note">
+                <strong>Thách thức cốt lõi: Cân bằng An ninh và Trải nghiệm người dùng (UX)</strong><br>
+                Khi thiết kế luồng khôi phục mật khẩu, chúng ta phải đối mặt với một mâu thuẫn:
+                <ul>
+                    <li><strong>An ninh quá cao:</strong> Nếu quy trình quá phức tạp (yêu cầu nhiều yếu tố mà người dùng
+                        có thể đã quên hoặc mất), người dùng hợp lệ (đặc biệt là người lớn tuổi, ít rành công nghệ) sẽ
+                        bị khóa khỏi tài khoản của chính họ.</li>
+                    <li><strong>UX quá đơn giản:</strong> Nếu quy trình quá dễ dàng (chỉ cần Tên và Ngày sinh), kẻ tấn
+                        công sẽ dễ dàng chiếm quyền tài khoản.</li>
+                </ul>
+                Một thiết kế tốt phải cung cấp nhiều con đường khôi phục, cho phép người dùng lựa chọn phương án phù hợp
+                với họ, đồng thời đảm bảo các lớp bảo mật đủ mạnh.
+            </div>
+
+            <div class="attack-scenario">
+                <h3>Phân tích Luồng 1, 3, 4: Gửi OTP qua SMS</h3>
+                <p><strong>Mô tả:</strong> Người dùng yêu cầu OTP và hệ thống gửi nó qua SMS.</p>
+                <ul>
+                    <li><strong>(S) Spoofing:</strong> Kẻ tấn công thực hiện tấn công <strong>SIM Swapping</strong>, lừa
+                        nhà mạng chuyển số điện thoại của nạn nhân sang một thẻ SIM mà chúng kiểm soát. Khi đó, chúng sẽ
+                        nhận được mã OTP.</li>
+                    <li><strong>(I) Information Disclosure:</strong> Nếu server trả về "Số điện thoại không tồn tại", kẻ
+                        tấn công có thể dùng tính năng này để dò tìm SĐT người dùng (User Enumeration).</li>
+                    <li><strong>(D) Denial of Service:</strong> Kẻ tấn công có thể spam yêu cầu OTP, gây tốn kém chi phí
+                        SMS cho công ty và làm phiền nạn nhân.</li>
+                </ul>
+            </div>
+
+            <div class="attack-scenario">
+                <h3>Phân tích Luồng 5, 6, 8, 9: Xác thực OTP và Thông tin cá nhân</h3>
+                <p><strong>Mô tả:</strong> Người dùng nhập OTP, sau đó nhập Tên và Ngày sinh để xác thực.</p>
+                <ul>
+                    <li><strong>(T) Tampering:</strong> Nếu OTP yếu (4 chữ số), kẻ tấn công có thể tấn công brute-force.
+                    </li>
+                    <li><strong>(I) Information Disclosure:</strong> Đây là một <strong>lỗ hổng thiết kế nghiêm
+                            trọng</strong>. Tên và Ngày sinh là những thông tin gần như công khai hoặc dễ dàng tìm thấy
+                        qua mạng xã hội. Việc dùng chúng làm "yếu tố xác thực thứ hai" là cực kỳ không an toàn. Kẻ tấn
+                        công sau khi có được SĐT (qua một vụ rò rỉ dữ liệu khác) có thể dễ dàng vượt qua bước này.</li>
+                    <li><strong>(E) Elevation of Privilege:</strong> Nếu kẻ tấn công vượt qua được cả hai bước (OTP và
+                        thông tin cá nhân), chúng sẽ chiếm được tài khoản. Mức độ dễ dàng của việc vượt qua bước xác
+                        thực thông tin cá nhân khiến rủi ro này trở nên rất cao.</li>
+                </ul>
+            </div>
+
+            <h3>Bước 4: Tổng hợp và Lên kế hoạch Khắc phục</h3>
+            <p>Dựa trên phân tích trên, chúng ta có một danh sách các biện pháp cần thực hiện, được ưu tiên theo mức độ
+                rủi ro.</p>
+            <table class="threat-table">
+                <thead>
+                    <tr>
+                        <th>Mối đe dọa (Tóm tắt)</th>
+                        <th>Hạng mục OWASP liên quan</th>
+                        <th>Biện pháp khắc phục (Mitigation)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sử dụng thông tin cá nhân tĩnh (Tên, DOB) làm yếu tố xác thực</td>
+                        <td><a href="./A04-InsecureDesign.html" target="_blank">A04</a>, <a
+                                href="./A07-AuthenticationFailures.html" target="_blank">A07</a></td>
+                        <td><strong>Hạn chế tối đa.</strong> Chỉ nên dùng như một phương án cuối cùng trong một quy
+                            trình khôi phục nhiều lớp. Luôn ưu tiên các yếu tố động (như OTP) hoặc các phương pháp mạnh
+                            hơn (Passkeys).</td>
+                    </tr>
+                    <tr>
+                        <td>Người dùng hợp lệ bị khóa tài khoản vĩnh viễn</td>
+                        <td><a href="./A04-InsecureDesign.html" target="_blank">A04</a></td>
+                        <td>Thiết kế các quy trình khôi phục thay thế:  Cung cấp "mã khôi phục" (recovery codes) cho
+                            người dùng lưu trữ, hoặc một quy trình xác minh danh tính qua bộ phận hỗ trợ khách hàng.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tấn công SIM Swapping</td>
+                        <td><a href="./A07-AuthenticationFailures.html" target="_blank">A07</a></td>
+                        <td>
+                            <ul>
+                                <li>Thông báo cho người dùng qua các kênh khác (email) khi có yêu cầu reset.</li>
+                                <li>Khuyến khích người dùng chuyển sang các phương pháp MFA mạnh hơn như App-based OTP
+                                    hoặc Passkeys.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tấn công Brute-force mã OTP</td>
+                        <td><a href="./A07-AuthenticationFailures.html" target="_blank">A07</a></td>
+                        <td>
+                            <ul>
+                                <li>Sử dụng OTP dài (tối thiểu 6 ký tự).</li>
+                                <li>Giới hạn số lần nhập sai (ví dụ: 5 lần).</li>
+                                <li>OTP phải có thời gian hết hạn ngắn (ví dụ: 5-10 phút).</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Spam tính năng gửi OTP (DoS)</td>
+                        <td><a href="./A04-InsecureDesign.html" target="_blank">A04</a></td>
+                        <td>Sử dụng Rate Limiting và CAPTCHA cho chức năng yêu cầu gửi OTP.</td>
+                    </tr>
+                    <tr>
+                        <td>Lộ thông tin qua thông báo lỗi</td>
+                        <td><a href="./A07-AuthenticationFailures.html" target="_blank">A07</a></td>
+                        <td>Luôn trả về một thông báo chung chung: "Nếu thông tin của bạn hợp lệ, một mã OTP sẽ được gửi
+                            đi."</td>
+                    </tr>
+                    <tr>
+                        <td>Thiếu ghi log đầy đủ</td>
+                        <td><a href="./A09-LoggingFailures.html" target="_blank">A09</a></td>
+                        <td>Ghi lại mọi sự kiện quan trọng (IP, User-Agent, thời gian...) để phục vụ việc điều tra.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>4. Best Practices cho Threat Modeling</h2>
+            <ul>
+                <li><strong>Thực hiện sớm và thường xuyên:</strong> Threat modeling hiệu quả nhất khi được thực hiện ở
+                    giai đoạn thiết kế và được cập nhật mỗi khi có sự thay đổi lớn trong kiến trúc hoặc tính năng.</li>
+                <li><strong>Tập trung vào sơ đồ:</strong> Một sơ đồ luồng dữ liệu (DFD) hoặc sơ đồ tuần tự rõ ràng là
+                    công cụ mạnh mẽ nhất. Nếu bạn không thể vẽ ra hệ thống của mình, bạn không thể bảo vệ nó.</li>
+                <li><strong>Đừng cố gắng hoàn hảo ngay lần đầu:</strong> Mục tiêu là tìm ra các mối đe dọa rõ ràng nhất
+                    trước. Việc lặp lại quy trình sẽ giúp bạn phát hiện thêm các vấn đề tinh vi hơn.</li>
+                <li><strong>Biến nó thành một hoạt động của cả team:</strong> Mọi người khi tập trung quan sát đều có
+                    thể đóng góp những góc nhìn giá trị.</li>
+            </ul>
+
+            <h2>5. Tài liệu Tham khảo Quan trọng</h2>
+            <ul>
+                <li><a href="https://owasp.org/www-community/Threat_Modeling" target="_blank"
+                        rel="noopener noreferrer">OWASP Threat Modeling Cheat Sheet</a>: Hướng dẫn chi tiết và súc tích
+                    từ OWASP.</li>
+                <li><a href="https://shostack.org/resources/threat-modeling" target="_blank"
+                        rel="noopener noreferrer">"Threat Modeling: Designing for Security"</a> của Adam Shostack: Cuốn
+                    sách kinh điển về chủ đề này.</li>
+                <li><a href="https://learn.microsoft.com/en-us/security/adoption/" target="_blank"
+                        rel="noopener noreferrer">Microsoft Security adoption resources
+                    </a>: such as Microsoft Cybersecurity Reference Architectures (MCRA) </li>
+                <li><a href="https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats"
+                        target="_blank" rel="noopener noreferrer">Microsoft Threat Modeling Tool</a>: a core element of
+                    the Microsoft Security Development Lifecycle (SDL)</li>
+                <li><a href="https://learn.microsoft.com/en-us/training/paths/tm-threat-modeling-fundamentals/"
+                        target="_blank" rel="noopener noreferrer">Threat Modeling Security Fundamentals</a>: Khóa học
+                    ngắn của Microsoft về Threat Modeling</li>
+            </ul>
+        </div>
+    </div>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+
+</html>
